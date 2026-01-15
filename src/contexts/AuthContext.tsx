@@ -20,16 +20,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem('token');
 
-    if (storedToken) {
-      setToken(storedToken);
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+      if (storedToken) {
+        setToken(storedToken);
+        try {
+          const userData = await authApi.getCurrentUser();
+          setUser(userData);
+          localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error) {
+          console.error('Failed to fetch user info:', error);
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   const login = async (data: LoginRequest) => {
@@ -39,10 +48,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(newToken);
     localStorage.setItem('token', newToken);
 
-    if (response.user) {
-      setUser(response.user);
-      localStorage.setItem('user', JSON.stringify(response.user));
-    }
+    const userData = await authApi.getCurrentUser();
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const register = async (data: RegisterRequest) => {
@@ -52,10 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(newToken);
     localStorage.setItem('token', newToken);
 
-    if (response.user) {
-      setUser(response.user);
-      localStorage.setItem('user', JSON.stringify(response.user));
-    }
+    const userData = await authApi.getCurrentUser();
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = async () => {

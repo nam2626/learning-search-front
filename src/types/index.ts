@@ -1,6 +1,7 @@
 export interface User {
   email: string;
   nickname: string;
+  grade?: number;
 }
 
 export interface LoginRequest {
@@ -25,4 +26,23 @@ export interface SearchResponse {
 
 export interface UploadResponse {
   message: string;
+}
+
+export interface Member {
+  uid: string;
+  email: string;
+  nickname: string;
+  grade: number;
+  createdAt?: string;
+}
+
+export interface MemberListResponse {
+  members: Member[];
+  nextPageToken?: string;
+}
+
+export enum MemberGrade {
+  UNAPPROVED = 0,
+  APPROVED = 1,
+  ADMIN = 2,
 }
