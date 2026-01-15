@@ -41,8 +41,8 @@ export interface MemberListResponse {
   nextPageToken?: string;
 }
 
-export enum MemberGrade {
-  UNAPPROVED = 0,
-  APPROVED = 1,
-  ADMIN = 2,
-}
+export const MemberGrade = {
+  UNAPPROVED: 0,
+  APPROVED: 1,
+  ADMIN: 2,
+} as const;
