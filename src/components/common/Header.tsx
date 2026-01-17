@@ -20,12 +20,20 @@ export default function Header() {
 
           <nav className="flex items-center space-x-4">
             {user?.grade && user.grade >= 1 && (
-              <Link
-                to="/"
-                className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
-              >
-                검색
-              </Link>
+              <>
+                <Link
+                  to="/"
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                >
+                  검색
+                </Link>
+                <Link
+                  to="/dashboard"
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                >
+                  대시보드
+                </Link>
+              </>
             )}
             {user?.grade === 2 && (
               <>
@@ -39,7 +47,13 @@ export default function Header() {
                   to="/admin"
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
                 >
-                  관리자
+                  회원관리
+                </Link>
+                <Link
+                  to="/admin/dashboard"
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                >
+                  관리대시보드
                 </Link>
               </>
             )}

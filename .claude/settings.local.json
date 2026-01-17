@@ -5,7 +5,9 @@
       "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd admin member management and role-based access control\n\n- Add admin page for member management \\(list, grade modification\\)\n- Implement role-based access control \\(grade 0/1/2\\)\n- Add AdminRoute and ApprovedRoute components for permission checking\n- Fetch user info including grade from /api/auth/me endpoint\n- Update header to show menus based on user grade\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git push:*)",
       "Bash(npm run build:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix build error: convert enum to const object\n\n- Change MemberGrade from enum to const object for erasableSyntaxOnly compatibility\n- Fix Vercel build error with TypeScript\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nFix build error: convert enum to const object\n\n- Change MemberGrade from enum to const object for erasableSyntaxOnly compatibility\n- Fix Vercel build error with TypeScript\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git commit:*)",
+      "Bash(git push)"
     ]
   }
 }

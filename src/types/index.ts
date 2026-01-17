@@ -46,3 +46,39 @@ export const MemberGrade = {
   APPROVED: 1,
   ADMIN: 2,
 } as const;
+
+export interface CreditInfo {
+  remaining: number;
+  max: number;
+  lastResetDate: string;
+}
+
+export interface SearchLog {
+  id: string;
+  query: string;
+  answer: string;
+  createdAt: string;
+}
+
+export interface UserDashboard {
+  credit: CreditInfo;
+  recentQueries: SearchLog[];
+}
+
+export interface UserCreditInfo {
+  uid: string;
+  email: string;
+  nickname: string;
+  remainingCredits: number;
+  maxCredits: number;
+  lastResetDate: string;
+}
+
+export interface AdminSearchLog {
+  id: string;
+  uid: string;
+  email: string;
+  nickname: string;
+  query: string;
+  createdAt: string;
+}

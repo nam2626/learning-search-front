@@ -10,6 +10,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import UploadPage from './pages/UploadPage';
 import AdminPage from './pages/AdminPage';
+import DashboardPage from './pages/DashboardPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +38,11 @@ function App() {
                   <HomePage />
                 </ApprovedRoute>
               } />
+              <Route path="dashboard" element={
+                <ApprovedRoute>
+                  <DashboardPage />
+                </ApprovedRoute>
+              } />
               <Route path="upload" element={
                 <AdminRoute>
                   <UploadPage />
@@ -44,6 +51,11 @@ function App() {
               <Route path="admin" element={
                 <AdminRoute>
                   <AdminPage />
+                </AdminRoute>
+              } />
+              <Route path="admin/dashboard" element={
+                <AdminRoute>
+                  <AdminDashboardPage />
                 </AdminRoute>
               } />
             </Route>
