@@ -7,6 +7,8 @@ interface UserCreditsTableProps {
   onUpdate: () => void;
 }
 
+const MAX_DAILY_CREDITS = 20;
+
 export default function UserCreditsTable({ users, onUpdate }: UserCreditsTableProps) {
   const [editingUid, setEditingUid] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<number>(0);
@@ -14,7 +16,7 @@ export default function UserCreditsTable({ users, onUpdate }: UserCreditsTablePr
 
   const handleEditStart = (user: UserCreditInfo) => {
     setEditingUid(user.uid);
-    setEditValue(user.remainingCredits);
+    setEditValue(user.dailyCredits);
   };
 
   const handleEditCancel = () => {
@@ -55,16 +57,16 @@ export default function UserCreditsTable({ users, onUpdate }: UserCreditsTablePr
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                이메일
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                닉네임
+                UID
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 남은 크레딧
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                마지막 리셋
+                총 사용량
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                마지막 활동
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 작업
@@ -74,30 +76,30 @@ export default function UserCreditsTable({ users, onUpdate }: UserCreditsTablePr
           <tbody className="bg-white divide-y divide-gray-200">
             {users.map((user) => (
               <tr key={user.uid} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {user.email}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {user.nickname}
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                  {user.uid.substring(0, 8)}...
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {editingUid === user.uid ? (
                     <input
                       type="number"
                       min="0"
-                      max={user.maxCredits}
+                      max={MAX_DAILY_CREDITS}
                       value={editValue}
                       onChange={(e) => setEditValue(parseInt(e.target.value) || 0)}
                       className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <span className={user.remainingCredits === 0 ? 'text-red-600 font-medium' : 'text-gray-900'}>
-                      {user.remainingCredits} / {user.maxCredits}
+                    <span className={user.dailyCredits === 0 ? 'text-red-600 font-medium' : 'text-gray-900'}>
+                      {user.dailyCredits} / {MAX_DAILY_CREDITS}
                     </span>
                   )}
                 </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {user.totalUsage}회
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(user.lastResetDate).toLocaleDateString('ko-KR')}
+                  {user.lastActiveDate}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {editingUid === user.uid ? (

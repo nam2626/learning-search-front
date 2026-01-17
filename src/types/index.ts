@@ -68,11 +68,9 @@ export interface UserDashboard {
 
 export interface UserCreditInfo {
   uid: string;
-  email: string;
-  nickname: string;
-  remainingCredits: number;
-  maxCredits: number;
-  lastResetDate: string;
+  dailyCredits: number;
+  lastActiveDate: string;
+  totalUsage: number;
 }
 
 export interface AdminSearchLog {
