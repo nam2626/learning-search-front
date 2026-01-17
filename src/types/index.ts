@@ -48,21 +48,22 @@ export const MemberGrade = {
 } as const;
 
 export interface CreditInfo {
-  remaining: number;
-  max: number;
-  lastResetDate: string;
+  uid: string;
+  dailyCredits: number;
+  lastActiveDate: string;
+  totalUsage: number;
 }
 
 export interface SearchLog {
-  id: string;
+  uid: string;
   query: string;
-  answer: string;
-  createdAt: string;
+  timestamp: string;
+  answerSummary: string | null;
 }
 
 export interface UserDashboard {
   credit: CreditInfo;
-  recentQueries: SearchLog[];
+  logs: SearchLog[];
 }
 
 export interface UserCreditInfo {

@@ -55,7 +55,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="lg:col-span-2">
-            {dashboard?.recentQueries && <RecentQueries queries={dashboard.recentQueries} />}
+            {dashboard?.logs && <RecentQueries logs={dashboard.logs} />}
           </div>
         </div>
       </div>

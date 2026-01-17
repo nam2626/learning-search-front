@@ -4,8 +4,10 @@ interface CreditCardProps {
   credit: CreditInfo;
 }
 
+const MAX_DAILY_CREDITS = 20;
+
 export default function CreditCard({ credit }: CreditCardProps) {
-  const percentage = (credit.remaining / credit.max) * 100;
+  const percentage = (credit.dailyCredits / MAX_DAILY_CREDITS) * 100;
 
   const getBarColor = () => {
     if (percentage > 50) return 'bg-green-500';
@@ -18,8 +20,8 @@ export default function CreditCard({ credit }: CreditCardProps) {
       <h3 className="text-lg font-semibold text-gray-900 mb-4">오늘의 크레딧</h3>
 
       <div className="flex items-end justify-between mb-2">
-        <span className="text-3xl font-bold text-gray-900">{credit.remaining}</span>
-        <span className="text-gray-500">/ {credit.max}</span>
+        <span className="text-3xl font-bold text-gray-900">{credit.dailyCredits}</span>
+        <span className="text-gray-500">/ {MAX_DAILY_CREDITS}</span>
       </div>
 
       <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
@@ -29,9 +31,10 @@ export default function CreditCard({ credit }: CreditCardProps) {
         ></div>
       </div>
 
-      <p className="text-sm text-gray-500">
-        마지막 리셋: {new Date(credit.lastResetDate).toLocaleDateString('ko-KR')}
-      </p>
+      <div className="space-y-1 text-sm text-gray-500">
+        <p>마지막 활동: {credit.lastActiveDate}</p>
+        <p>총 사용량: {credit.totalUsage}회</p>
+      </div>
     </div>
   );
 }
