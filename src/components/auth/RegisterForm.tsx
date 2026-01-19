@@ -19,7 +19,7 @@ export default function RegisterForm() {
 
     try {
       await register({ email, password, nickname });
-      navigate('/');
+      navigate('/login', { state: { message: '회원가입이 완료되었습니다. 로그인해주세요.' } });
     } catch (err) {
       setError('회원가입에 실패했습니다. 입력 정보를 확인해주세요.');
     } finally {

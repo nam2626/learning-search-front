@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function LoginForm() {
@@ -10,6 +10,8 @@ export default function LoginForm() {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const successMessage = (location.state as { message?: string })?.message;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +37,11 @@ export default function LoginForm() {
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {successMessage && (
+            <div className="bg-green-50 border border-green-400 text-green-700 px-4 py-3 rounded">
+              {successMessage}
+            </div>
+          )}
           {error && (
             <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">
               {error}

@@ -48,21 +48,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setToken(newToken);
     localStorage.setItem('token', newToken);
 
-    const userData = await authApi.getCurrentUser();
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    if (response.user) {
+      setUser(response.user);
+      localStorage.setItem('user', JSON.stringify(response.user));
+    } else {
+      const userData = await authApi.getCurrentUser(newToken);
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+    }
   };
 
   const register = async (data: RegisterRequest) => {
-    const response = await authApi.register(data);
-    const newToken = response.token;
-
-    setToken(newToken);
-    localStorage.setItem('token', newToken);
-
-    const userData = await authApi.getCurrentUser();
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    await authApi.register(data);
   };
 
   const logout = async () => {

@@ -9,11 +9,19 @@ export const apiClient = axios.create({
   },
 });
 
+const PUBLIC_ENDPOINTS = ['/api/auth/login', '/api/auth/register'];
+
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const isPublicEndpoint = PUBLIC_ENDPOINTS.some(
+      (endpoint) => config.url?.includes(endpoint)
+    );
+
+    if (!isPublicEndpoint) {
+      const token = localStorage.getItem('token');
+      if (token && token !== 'null' && token !== 'undefined') {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
