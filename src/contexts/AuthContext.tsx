@@ -23,16 +23,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const initAuth = async () => {
       const storedToken = localStorage.getItem('token');
 
-      if (storedToken) {
-        setToken(storedToken);
+      if (storedToken && storedToken !== 'null' && storedToken !== 'undefined') {
         try {
-          const userData = await authApi.getCurrentUser();
+          const userData = await authApi.getCurrentUser(storedToken);
+          setToken(storedToken);
           setUser(userData);
           localStorage.setItem('user', JSON.stringify(userData));
         } catch (error) {
           console.error('Failed to fetch user info:', error);
           localStorage.removeItem('token');
           localStorage.removeItem('user');
+          setToken(null);
+          setUser(null);
         }
       }
       setIsLoading(false);
