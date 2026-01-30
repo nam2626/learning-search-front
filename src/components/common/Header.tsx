@@ -33,6 +33,12 @@ export default function Header() {
                 >
                   대시보드
                 </Link>
+                <Link
+                  to="/exam-analysis"
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                >
+                  이미지 + 검색
+                </Link>
               </>
             )}
             {user?.grade === 2 && (

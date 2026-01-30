@@ -24,6 +24,12 @@ export interface SearchResponse {
   answer: string;
 }
 
+export interface AnalysisResult {
+  answer: string;
+  confidence: number;
+  warning: string | null;
+}
+
 export interface UploadResponse {
   message: string;
 }

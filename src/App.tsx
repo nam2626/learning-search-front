@@ -12,6 +12,7 @@ import UploadPage from './pages/UploadPage';
 import AdminPage from './pages/AdminPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import ExamAnalysisPage from './pages/ExamAnalysisPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,6 +42,11 @@ function App() {
               <Route path="dashboard" element={
                 <ApprovedRoute>
                   <DashboardPage />
+                </ApprovedRoute>
+              } />
+              <Route path="exam-analysis" element={
+                <ApprovedRoute>
+                  <ExamAnalysisPage />
                 </ApprovedRoute>
               } />
               <Route path="upload" element={

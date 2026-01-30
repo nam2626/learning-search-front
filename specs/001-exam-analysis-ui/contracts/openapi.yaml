@@ -1,0 +1,101 @@
+openapi: 3.0.0
+info:
+  title: Exam Analysis & Search API
+  version: 1.0.0
+paths:
+  /api/exam/analyze:
+    post:
+      summary: Analyze exam question with image and text
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Exam question image (PNG/JPG, max 1MB)
+                query:
+                  type: string
+                  description: User question text
+              required:
+                - query
+      responses:
+        '200':
+          description: Successful analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalysisResult'
+        '400':
+          description: Bad request (File too large, empty query)
+        '401':
+          description: Unauthorized
+  /api/search:
+    post:
+      summary: Search using text query
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+              required:
+                - query
+      responses:
+        '200':
+          description: Successful search
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+        '401':
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    AnalysisResult:
+      type: object
+      properties:
+        answer:
+          type: string
+        confidence:
+          type: number
+          format: float
+          minimum: 0.0
+          maximum: 1.0
+        ragContext:
+          type: array
+          items:
+            type: string
+        imageAnalysisSummary:
+          type: string
+        warning:
+          type: string
+          nullable: true
+      required:
+        - answer
+        - confidence
+        - ragContext
+        - imageAnalysisSummary
+    SearchResult:
+      type: object
+      properties:
+        answer:
+          type: string
+      required:
+        - answer
