@@ -10,10 +10,10 @@ export default function HomePage() {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            학습 자료 검색
+            컴활 1급/2급 이론 질문
           </h1>
           <p className="text-lg text-gray-600">
-            업로드된 학습 자료에서 원하는 정보를 검색하세요
+            업로드된 학습 자료를 바탕으로 컴활 이론과 개념을 질문하세요
           </p>
         </div>
 

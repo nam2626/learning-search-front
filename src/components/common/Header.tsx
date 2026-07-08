@@ -18,14 +18,14 @@ export default function Header() {
             학습 검색
           </Link>
 
-          <nav className="flex items-center space-x-4">
+          <nav className="flex items-center gap-2">
             {user?.grade && user.grade >= 1 && (
               <>
                 <Link
                   to="/"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
                 >
-                  검색
+                  컴활 1급/2급 이론 질문
                 </Link>
                 <Link
                   to="/dashboard"
@@ -35,9 +35,9 @@ export default function Header() {
                 </Link>
                 <Link
                   to="/exam-analysis"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
                 >
-                  이미지 + 검색
+                  함수 및 문제 풀이
                 </Link>
               </>
             )}
@@ -45,19 +45,19 @@ export default function Header() {
               <>
                 <Link
                   to="/upload"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
                 >
                   업로드
                 </Link>
                 <Link
                   to="/admin"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
                 >
                   회원관리
                 </Link>
                 <Link
                   to="/admin/dashboard"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
                 >
                   관리대시보드
                 </Link>
@@ -71,7 +71,7 @@ export default function Header() {
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
+                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
                 >
                   로그아웃
                 </button>

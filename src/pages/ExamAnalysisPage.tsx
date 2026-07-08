@@ -31,7 +31,7 @@ export default function ExamAnalysisPage() {
       <div className="md:flex md:items-center md:justify-between mb-6">
         <div className="flex-1 min-w-0">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            학습 도우미
+            함수 및 문제 풀이
           </h2>
         </div>
       </div>
@@ -47,7 +47,7 @@ export default function ExamAnalysisPage() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
-            이미지 분석
+            함수 및 문제 풀이
           </button>
           <button
             onClick={() => setActiveTab('search')}
@@ -57,7 +57,7 @@ export default function ExamAnalysisPage() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
-            일반 검색
+            컴활 1급/2급 이론 질문
           </button>
         </nav>
       </div>

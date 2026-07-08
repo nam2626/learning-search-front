@@ -23,7 +23,7 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="학습 자료에 대해 질문해보세요..."
+          placeholder="컴활 1급/2급 이론이나 개념을 질문해보세요..."
           className="w-full px-6 py-4 text-lg border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           disabled={isLoading}
         />
