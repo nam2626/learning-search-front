@@ -1,10 +1,10 @@
 import apiClient from './client';
 import type { AnalysisResult } from '../types';
 
-export const analyzeExam = async (image: File | undefined, query: string): Promise<AnalysisResult> => {
+export const analyzeExam = async (file: File | undefined, query: string): Promise<AnalysisResult> => {
   const formData = new FormData();
-  if (image) {
-    formData.append('image', image);
+  if (file) {
+    formData.append('file', file);
   }
   formData.append('query', query);
 

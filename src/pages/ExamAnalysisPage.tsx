@@ -11,8 +11,8 @@ export default function ExamAnalysisPage() {
   const { search, result: searchResult, isLoading: isSearchLoading, error: searchError } = useSearch();
   const [activeTab, setActiveTab] = useState<'analysis' | 'search'>('analysis');
 
-  const handleAnalysisSubmit = (image: File | undefined, query: string) => {
-    analyze({ image, query });
+  const handleAnalysisSubmit = (file: File | undefined, query: string) => {
+    analyze({ file, query });
   };
 
   const handleSearchSubmit = (query: string) => {

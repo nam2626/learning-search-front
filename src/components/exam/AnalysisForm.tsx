@@ -1,34 +1,44 @@
 import { useState, useRef } from 'react';
 
 interface Props {
-  onSubmit: (image: File | undefined, query: string) => void;
+  onSubmit: (file: File | undefined, query: string) => void;
   isLoading: boolean;
 }
 
 export default function AnalysisForm({ onSubmit, isLoading }: Props) {
   const [query, setQuery] = useState('');
-  const [image, setImage] = useState<File | undefined>(undefined);
+  const [file, setFile] = useState<File | undefined>(undefined);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
     setError(null);
 
-    if (file) {
-      if (file.size > 1024 * 1024) { // 1MB limit
-        setError('이미지 크기는 1MB를 초과할 수 없습니다.');
+    if (selectedFile) {
+      if (selectedFile.size > 10 * 1024 * 1024) {
+        setError('파일 크기는 10MB를 초과할 수 없습니다.');
         return;
       }
-      setImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+
+      if (!isSupportedFile(selectedFile)) {
+        setError('PNG, JPG, JPEG, XLS, XLSX, CSV 파일만 업로드할 수 있습니다.');
+        return;
+      }
+
+      setFile(selectedFile);
+      if (selectedFile.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result as string);
+        };
+        reader.readAsDataURL(selectedFile);
+      } else {
+        setPreview(null);
+      }
     } else {
-      setImage(undefined);
+      setFile(undefined);
       setPreview(null);
     }
   };
@@ -39,11 +49,11 @@ export default function AnalysisForm({ onSubmit, isLoading }: Props) {
       setError('질문을 입력해주세요.');
       return;
     }
-    onSubmit(image, query);
+    onSubmit(file, query);
   };
 
-  const handleClearImage = () => {
-    setImage(undefined);
+  const handleClearFile = () => {
+    setFile(undefined);
     setPreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -82,21 +92,27 @@ export default function AnalysisForm({ onSubmit, isLoading }: Props) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">이미지 업로드 (선택)</label>
+        <label className="block text-sm font-medium text-gray-700">이미지 또는 엑셀 파일 업로드 (선택)</label>
         <div className="mt-1 flex items-center space-x-4">
           <input
             type="file"
             ref={fileInputRef}
-            accept="image/png, image/jpeg, image/jpg"
-            onChange={handleImageChange}
+            accept="image/png, image/jpeg, image/jpg, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv, .xls, .xlsx, .csv"
+            onChange={handleFileChange}
             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
-          {preview && (
+          {file && (
             <div className="relative">
-              <img src={preview} alt="Preview" className="h-20 w-20 object-cover rounded-md" />
+              {preview ? (
+                <img src={preview} alt="Preview" className="h-20 w-20 object-cover rounded-md" />
+              ) : (
+                <div className="h-20 w-32 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-700 flex items-center justify-center text-center">
+                  {file.name}
+                </div>
+              )}
               <button
                 type="button"
-                onClick={handleClearImage}
+                onClick={handleClearFile}
                 className="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full p-1 hover:bg-red-200"
               >
                 <span className="sr-only">Remove</span>
@@ -107,7 +123,7 @@ export default function AnalysisForm({ onSubmit, isLoading }: Props) {
             </div>
           )}
         </div>
-        <p className="mt-2 text-sm text-gray-500">PNG, JPG up to 1MB</p>
+        <p className="mt-2 text-sm text-gray-500">PNG, JPG, XLS, XLSX, CSV up to 10MB</p>
       </div>
 
       <div className="flex justify-end">
@@ -130,5 +146,15 @@ export default function AnalysisForm({ onSubmit, isLoading }: Props) {
         </button>
       </div>
     </form>
+  );
+}
+
+function isSupportedFile(file: File) {
+  const filename = file.name.toLowerCase();
+  return (
+    file.type.startsWith('image/') ||
+    filename.endsWith('.xls') ||
+    filename.endsWith('.xlsx') ||
+    filename.endsWith('.csv')
   );
 }

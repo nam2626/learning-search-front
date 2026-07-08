@@ -7,8 +7,8 @@ export function useExamAnalysis() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
 
   const mutation = useMutation({
-    mutationFn: (params: { image: File | undefined; query: string }) => 
-      analyzeExam(params.image, params.query),
+    mutationFn: (params: { file: File | undefined; query: string }) => 
+      analyzeExam(params.file, params.query),
     onSuccess: (data) => {
       setResult(data);
     },
