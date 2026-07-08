@@ -5,7 +5,6 @@ import Layout from './components/common/Layout';
 import PrivateRoute from './components/common/PrivateRoute';
 import AdminRoute from './components/common/AdminRoute';
 import ApprovedRoute from './components/common/ApprovedRoute';
-import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import UploadPage from './pages/UploadPage';
@@ -36,7 +35,7 @@ function App() {
             }>
               <Route index element={
                 <ApprovedRoute>
-                  <HomePage />
+                  <ExamAnalysisPage />
                 </ApprovedRoute>
               } />
               <Route path="dashboard" element={

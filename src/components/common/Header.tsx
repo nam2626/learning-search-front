@@ -14,19 +14,13 @@ export default function Header() {
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="text-xl font-bold text-gray-900">
-            학습 검색
+          <Link to="/exam-analysis" className="text-xl font-bold text-gray-900">
+            학습 도우미
           </Link>
 
           <nav className="flex items-center gap-2">
             {user?.grade && user.grade >= 1 && (
               <>
-                <Link
-                  to="/"
-                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
-                >
-                  컴활 1급/2급 이론 질문
-                </Link>
                 <Link
                   to="/dashboard"
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
@@ -37,7 +31,7 @@ export default function Header() {
                   to="/exam-analysis"
                   className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
                 >
-                  함수 및 문제 풀이
+                  문제 풀이
                 </Link>
               </>
             )}
