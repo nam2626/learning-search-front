@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [nickname, setNickname] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState('');
@@ -22,13 +24,18 @@ export default function RegisterForm() {
       return;
     }
 
+    if (password !== passwordConfirm) {
+      setError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       await register({ email, password, nickname, termsAccepted });
       navigate('/login', { state: { message: '회원가입이 완료되었습니다. 로그인해주세요.' } });
     } catch (err) {
-      setError('회원가입에 실패했습니다. 입력 정보를 확인해주세요.');
+      setError(getRegistrationErrorMessage(err));
     } finally {
       setIsLoading(false);
     }
@@ -88,10 +95,25 @@ export default function RegisterForm() {
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="비밀번호"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="passwordConfirm" className="sr-only">
+                비밀번호 확인
+              </label>
+              <input
+                id="passwordConfirm"
+                name="passwordConfirm"
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="비밀번호 확인"
+                value={passwordConfirm}
+                onChange={(e) => setPasswordConfirm(e.target.value)}
               />
             </div>
           </div>
@@ -182,4 +204,27 @@ export default function RegisterForm() {
       </div>
     </div>
   );
+}
+
+function getRegistrationErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data;
+
+    if (data && typeof data === 'object') {
+      const detail = data.error || data.message;
+      if (typeof detail === 'string' && detail.trim()) {
+        return `회원가입에 실패했습니다. 원인: ${detail}`;
+      }
+    }
+
+    if (typeof data === 'string' && data.trim()) {
+      return `회원가입에 실패했습니다. 원인: ${data}`;
+    }
+
+    if (error.message) {
+      return `회원가입에 실패했습니다. 원인: ${error.message}`;
+    }
+  }
+
+  return '회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.';
 }
