@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import CreditCard from '../components/dashboard/CreditCard';
 import RecentQueries from '../components/dashboard/RecentQueries';
+import ProfileSettings from '../components/dashboard/ProfileSettings';
 import { getUserDashboard } from '../api/dashboard';
 import type { UserDashboard } from '../types';
 
@@ -51,7 +52,10 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
-            {dashboard?.credit && <CreditCard credit={dashboard.credit} />}
+            <div className="space-y-6">
+              <ProfileSettings />
+              {dashboard?.credit && <CreditCard credit={dashboard.credit} />}
+            </div>
           </div>
 
           <div className="lg:col-span-2">

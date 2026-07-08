@@ -16,6 +16,11 @@ export interface RegisterRequest {
   termsAccepted: boolean;
 }
 
+export interface UpdateProfileRequest {
+  nickname?: string;
+  password?: string;
+}
+
 export interface AuthResponse {
   token: string;
   user?: User;

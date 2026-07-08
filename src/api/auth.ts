@@ -1,6 +1,13 @@
 import axios from 'axios';
 import apiClient from './client';
-import type { LoginRequest, RegisterRequest, AuthResponse, User, EmailCheckResponse } from '../types';
+import type {
+  LoginRequest,
+  RegisterRequest,
+  AuthResponse,
+  User,
+  EmailCheckResponse,
+  UpdateProfileRequest,
+} from '../types';
 
 const API_BASE_URL = 'https://nam3324.synology.me:32902';
 
@@ -32,6 +39,11 @@ export const logout = async (): Promise<void> => {
 
 export const deleteAccount = async (): Promise<void> => {
   await apiClient.delete('/api/auth/delete');
+};
+
+export const updateProfile = async (data: UpdateProfileRequest): Promise<User> => {
+  const response = await apiClient.put<User>('/api/auth/me', data);
+  return response.data;
 };
 
 export const getCurrentUser = async (token?: string): Promise<User> => {

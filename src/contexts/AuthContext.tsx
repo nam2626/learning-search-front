@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { User, LoginRequest, RegisterRequest } from '../types';
+import type { User, LoginRequest, RegisterRequest, UpdateProfileRequest } from '../types';
 import * as authApi from '../api/auth';
 
 interface AuthContextType {
@@ -9,6 +9,8 @@ interface AuthContextType {
   isLoading: boolean;
   login: (data: LoginRequest) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
+  updateProfile: (data: UpdateProfileRequest) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -64,6 +66,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await authApi.register(data);
   };
 
+  const updateProfile = async (data: UpdateProfileRequest) => {
+    const updatedUser = await authApi.updateProfile(data);
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
+  const deleteAccount = async () => {
+    try {
+      await authApi.deleteAccount();
+    } finally {
+      setToken(null);
+      setUser(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
+  };
+
   const logout = async () => {
     try {
       await authApi.logout();
@@ -84,6 +103,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         login,
         register,
+        updateProfile,
+        deleteAccount,
         logout,
       }}
     >
