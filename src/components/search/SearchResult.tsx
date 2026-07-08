@@ -1,3 +1,5 @@
+import MarkdownViewer from '../common/MarkdownViewer';
+
 interface SearchResultProps {
   result: string | null;
   error: string | null;
@@ -37,9 +39,7 @@ export default function SearchResult({ result, error, isLoading }: SearchResultP
     <div className="w-full max-w-3xl mx-auto mt-8">
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">답변</h3>
-        <div className="prose prose-blue max-w-none">
-          <p className="text-gray-700 whitespace-pre-wrap">{result}</p>
-        </div>
+        <MarkdownViewer content={result} />
       </div>
     </div>
   );

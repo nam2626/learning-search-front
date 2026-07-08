@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AnalysisForm from '../components/exam/AnalysisForm';
 import AnalysisResult from '../components/exam/AnalysisResult';
 import { useExamAnalysis } from '../hooks/useExamAnalysis';
@@ -10,6 +10,13 @@ export default function ExamAnalysisPage() {
   const { analyze, result, isLoading, error } = useExamAnalysis();
   const { search, result: searchResult, isLoading: isSearchLoading, error: searchError } = useSearch();
   const [activeTab, setActiveTab] = useState<'analysis' | 'search'>('analysis');
+  const [formResetSignal, setFormResetSignal] = useState(0);
+
+  useEffect(() => {
+    if (result) {
+      setFormResetSignal((value) => value + 1);
+    }
+  }, [result]);
 
   const handleAnalysisSubmit = (file: File | undefined, query: string) => {
     analyze({ file, query });
@@ -59,7 +66,11 @@ export default function ExamAnalysisPage() {
       {activeTab === 'analysis' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
-            <AnalysisForm onSubmit={handleAnalysisSubmit} isLoading={isLoading} />
+            <AnalysisForm
+              onSubmit={handleAnalysisSubmit}
+              isLoading={isLoading}
+              resetSignal={formResetSignal}
+            />
             {error && (
               <div className="mt-4 bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative">
                 <span className="block sm:inline">오류가 발생했습니다: {error.message}</span>

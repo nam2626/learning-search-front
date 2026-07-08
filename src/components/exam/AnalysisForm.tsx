@@ -1,16 +1,31 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface Props {
   onSubmit: (file: File | undefined, query: string) => void;
   isLoading: boolean;
+  resetSignal?: number;
 }
 
-export default function AnalysisForm({ onSubmit, isLoading }: Props) {
+export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props) {
   const [query, setQuery] = useState('');
   const [file, setFile] = useState<File | undefined>(undefined);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (resetSignal === undefined) {
+      return;
+    }
+
+    setQuery('');
+    setFile(undefined);
+    setPreview(null);
+    setError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, [resetSignal]);
 
   const applySelectedFile = (selectedFile: File) => {
     if (selectedFile.size > 10 * 1024 * 1024) {
@@ -105,7 +120,7 @@ export default function AnalysisForm({ onSubmit, isLoading }: Props) {
             id="query"
             name="query"
             rows={3}
-            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border"
+            className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full resize-none sm:text-sm border-gray-300 rounded-md p-2 border"
             placeholder="질문을 입력하세요..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}

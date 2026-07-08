@@ -1,3 +1,4 @@
+import MarkdownViewer from '../common/MarkdownViewer';
 import type { AnalysisResult as AnalysisResultType } from '../../types';
 
 interface Props {
@@ -16,9 +17,7 @@ export default function AnalysisResult({ result }: Props) {
           </p>
         </div>
         <div className="border-t border-gray-200 px-4 py-5 sm:p-6">
-          <div className="prose max-w-none text-gray-900 whitespace-pre-wrap">
-            {result.answer}
-          </div>
+          <MarkdownViewer content={result.answer} />
         </div>
       </div>
 

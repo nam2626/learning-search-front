@@ -12,6 +12,7 @@ export default function SearchBar({ onSearch, isLoading }: SearchBarProps) {
     e.preventDefault();
     if (query.trim()) {
       onSearch(query);
+      setQuery('');
     }
   };
 
