@@ -140,15 +140,9 @@ export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props
             onChange={handleFileChange}
             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
-          {file && (
+          {preview && (
             <div className="relative">
-              {preview ? (
-                <img src={preview} alt="Preview" className="h-20 w-20 object-cover rounded-md" />
-              ) : (
-                <div className="h-20 w-32 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-700 flex items-center justify-center text-center">
-                  {file.name}
-                </div>
-              )}
+              <img src={preview} alt="Preview" className="h-20 w-20 object-cover rounded-md" />
               <button
                 type="button"
                 onClick={handleClearFile}
