@@ -4,7 +4,7 @@ interface CreditCardProps {
   credit: CreditInfo;
 }
 
-const MAX_DAILY_CREDITS = 20;
+const MAX_DAILY_CREDITS = 10;
 
 export default function CreditCard({ credit }: CreditCardProps) {
   const percentage = (credit.dailyCredits / MAX_DAILY_CREDITS) * 100;
