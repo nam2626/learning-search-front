@@ -31,7 +31,7 @@ export default function Header() {
                   to="/exam-analysis"
                   className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
                 >
-                  문제 풀이
+                  질문 / 답변
                 </Link>
               </>
             )}
