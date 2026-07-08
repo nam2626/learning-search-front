@@ -1,6 +1,6 @@
 import axios from 'axios';
 import apiClient from './client';
-import type { LoginRequest, RegisterRequest, AuthResponse, User } from '../types';
+import type { LoginRequest, RegisterRequest, AuthResponse, User, EmailCheckResponse } from '../types';
 
 const API_BASE_URL = 'https://nam3324.synology.me:32902';
 
@@ -13,6 +13,14 @@ export const login = async (data: LoginRequest): Promise<AuthResponse> => {
 
 export const register = async (data: RegisterRequest): Promise<AuthResponse> => {
   const response = await axios.post(`${API_BASE_URL}/api/auth/register`, data, {
+    headers: { 'Content-Type': 'application/json' },
+  });
+  return response.data;
+};
+
+export const checkEmail = async (email: string): Promise<EmailCheckResponse> => {
+  const response = await axios.get(`${API_BASE_URL}/api/auth/check-email`, {
+    params: { email },
     headers: { 'Content-Type': 'application/json' },
   });
   return response.data;

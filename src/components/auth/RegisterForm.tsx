@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { checkEmail as checkEmailApi } from '../../api/auth';
 
 export default function RegisterForm() {
   const [email, setEmail] = useState('');
@@ -9,15 +10,59 @@ export default function RegisterForm() {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [nickname, setNickname] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [emailCheckMessage, setEmailCheckMessage] = useState('');
+  const [isEmailAvailable, setIsEmailAvailable] = useState<boolean | null>(null);
+  const [checkedEmail, setCheckedEmail] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const { register } = useAuth();
   const navigate = useNavigate();
+  const hasPasswordMismatch = passwordConfirm.length > 0 && password !== passwordConfirm;
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setEmailCheckMessage('');
+    setIsEmailAvailable(null);
+    setCheckedEmail('');
+  };
+
+  const handleCheckEmail = async () => {
+    const trimmedEmail = email.trim();
+    setError('');
+    setEmailCheckMessage('');
+
+    if (!trimmedEmail) {
+      setEmailCheckMessage('이메일을 입력해주세요.');
+      setIsEmailAvailable(false);
+      return;
+    }
+
+    setIsCheckingEmail(true);
+
+    try {
+      const result = await checkEmailApi(trimmedEmail);
+      setIsEmailAvailable(result.available);
+      setCheckedEmail(result.available ? trimmedEmail : '');
+      setEmailCheckMessage(result.message);
+    } catch (err) {
+      setIsEmailAvailable(false);
+      setCheckedEmail('');
+      setEmailCheckMessage(getRegistrationErrorMessage(err));
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (isEmailAvailable !== true || checkedEmail !== email.trim()) {
+      setError('이메일 중복확인을 먼저 완료해주세요.');
+      return;
+    }
 
     if (!termsAccepted) {
       setError('이용약관에 동의해야 회원가입을 진행할 수 있습니다.');
@@ -56,7 +101,7 @@ export default function RegisterForm() {
             </div>
           )}
           <div className="rounded-md shadow-sm -space-y-px">
-            <div>
+            <div className="flex">
               <label htmlFor="email" className="sr-only">
                 이메일
               </label>
@@ -65,11 +110,19 @@ export default function RegisterForm() {
                 name="email"
                 type="email"
                 required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                className="appearance-none rounded-none relative block w-full min-w-0 flex-1 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-tl-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="이메일"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => handleEmailChange(e.target.value)}
               />
+              <button
+                type="button"
+                onClick={handleCheckEmail}
+                disabled={isCheckingEmail || isLoading || !email.trim()}
+                className="w-28 border border-l-0 border-gray-300 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 rounded-tr-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isCheckingEmail ? '확인 중' : '중복확인'}
+              </button>
             </div>
             <div>
               <label htmlFor="nickname" className="sr-only">
@@ -117,6 +170,16 @@ export default function RegisterForm() {
               />
             </div>
           </div>
+          {emailCheckMessage && (
+            <p className={`text-sm ${isEmailAvailable ? 'text-green-600' : 'text-red-600'}`}>
+              {emailCheckMessage}
+            </p>
+          )}
+          {hasPasswordMismatch && (
+            <p className="text-sm text-red-600">
+              비밀번호와 비밀번호 확인이 일치하지 않습니다.
+            </p>
+          )}
 
           <div className="space-y-3">
             <div className="rounded-md border border-gray-200 bg-white p-4 text-sm text-gray-700">

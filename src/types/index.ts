@@ -21,6 +21,11 @@ export interface AuthResponse {
   user?: User;
 }
 
+export interface EmailCheckResponse {
+  available: boolean;
+  message: string;
+}
+
 export interface SearchResponse {
   answer: string;
 }
