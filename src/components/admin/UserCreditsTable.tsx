@@ -7,7 +7,8 @@ interface UserCreditsTableProps {
   onUpdate: () => void;
 }
 
-const MAX_DAILY_CREDITS = 20;
+const MAX_EXAM_CREDITS = 10;
+const MAX_THEORY_CREDITS = 20;
 
 export default function UserCreditsTable({ users, onUpdate }: UserCreditsTableProps) {
   const [editingUid, setEditingUid] = useState<string | null>(null);
@@ -60,7 +61,7 @@ export default function UserCreditsTable({ users, onUpdate }: UserCreditsTablePr
                 UID
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                남은 크레딧
+                남은 횟수
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 총 사용량
@@ -84,15 +85,20 @@ export default function UserCreditsTable({ users, onUpdate }: UserCreditsTablePr
                     <input
                       type="number"
                       min="0"
-                      max={MAX_DAILY_CREDITS}
+                      max={MAX_EXAM_CREDITS}
                       value={editValue}
                       onChange={(e) => setEditValue(parseInt(e.target.value) || 0)}
                       className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   ) : (
-                    <span className={user.dailyCredits === 0 ? 'text-red-600 font-medium' : 'text-gray-900'}>
-                      {user.dailyCredits} / {MAX_DAILY_CREDITS}
-                    </span>
+                    <div className="space-y-1">
+                      <p className={(user.theoryCredits ?? 0) === 0 ? 'text-red-600 font-medium' : 'text-gray-900'}>
+                        이론: {user.theoryCredits ?? MAX_THEORY_CREDITS} / {MAX_THEORY_CREDITS}
+                      </p>
+                      <p className={(user.examCredits ?? user.dailyCredits) === 0 ? 'text-red-600 font-medium' : 'text-gray-900'}>
+                        문제: {user.examCredits ?? user.dailyCredits} / {MAX_EXAM_CREDITS}
+                      </p>
+                    </div>
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

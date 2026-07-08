@@ -67,6 +67,8 @@ export const MemberGrade = {
 export interface CreditInfo {
   uid: string;
   dailyCredits: number;
+  theoryCredits: number;
+  examCredits: number;
   lastActiveDate: string;
   totalUsage: number;
 }
@@ -86,6 +88,8 @@ export interface UserDashboard {
 export interface UserCreditInfo {
   uid: string;
   dailyCredits: number;
+  theoryCredits: number;
+  examCredits: number;
   lastActiveDate: string;
   totalUsage: number;
 }
