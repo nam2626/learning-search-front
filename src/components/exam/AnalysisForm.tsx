@@ -12,35 +12,59 @@ export default function AnalysisForm({ onSubmit, isLoading }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const applySelectedFile = (selectedFile: File) => {
+    if (selectedFile.size > 10 * 1024 * 1024) {
+      setError('파일 크기는 10MB를 초과할 수 없습니다.');
+      return;
+    }
+
+    if (!isSupportedFile(selectedFile)) {
+      setError('PNG, JPG, JPEG, XLS, XLSX, CSV 파일만 업로드할 수 있습니다.');
+      return;
+    }
+
+    setFile(selectedFile);
+    if (selectedFile.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
+    } else {
+      setPreview(null);
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     setError(null);
 
     if (selectedFile) {
-      if (selectedFile.size > 10 * 1024 * 1024) {
-        setError('파일 크기는 10MB를 초과할 수 없습니다.');
-        return;
-      }
-
-      if (!isSupportedFile(selectedFile)) {
-        setError('PNG, JPG, JPEG, XLS, XLSX, CSV 파일만 업로드할 수 있습니다.');
-        return;
-      }
-
-      setFile(selectedFile);
-      if (selectedFile.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreview(reader.result as string);
-        };
-        reader.readAsDataURL(selectedFile);
-      } else {
-        setPreview(null);
-      }
+      applySelectedFile(selectedFile);
     } else {
       setFile(undefined);
       setPreview(null);
     }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLFormElement>) => {
+    const pastedImage = Array.from(e.clipboardData.files).find((item) =>
+      item.type.startsWith('image/')
+    );
+
+    if (!pastedImage) {
+      return;
+    }
+
+    e.preventDefault();
+    setError(null);
+    const extension = pastedImage.type === 'image/png' ? 'png' : 'jpg';
+    const pastedFile = new File(
+      [pastedImage],
+      `pasted-image-${Date.now()}.${extension}`,
+      { type: pastedImage.type || 'image/png' }
+    );
+    applySelectedFile(pastedFile);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -61,7 +85,7 @@ export default function AnalysisForm({ onSubmit, isLoading }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+    <form onSubmit={handleSubmit} onPaste={handlePaste} className="space-y-6 bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
       {error && (
         <div className="rounded-md bg-red-50 p-4">
           <div className="flex">
@@ -123,7 +147,9 @@ export default function AnalysisForm({ onSubmit, isLoading }: Props) {
             </div>
           )}
         </div>
-        <p className="mt-2 text-sm text-gray-500">PNG, JPG, XLS, XLSX, CSV up to 10MB</p>
+        <p className="mt-2 text-sm text-gray-500">
+          PNG, JPG, XLS, XLSX, CSV up to 10MB. 이미지 캡처는 Ctrl+V로 붙여넣을 수 있습니다.
+        </p>
       </div>
 
       <div className="flex justify-end">
