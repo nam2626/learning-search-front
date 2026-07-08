@@ -1,22 +1,39 @@
 import { useEffect, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import AnalysisForm from '../components/exam/AnalysisForm';
 import AnalysisResult from '../components/exam/AnalysisResult';
 import { useExamAnalysis } from '../hooks/useExamAnalysis';
 import SearchBar from '../components/search/SearchBar';
 import SearchResult from '../components/search/SearchResult';
 import { useSearch } from '../hooks/useSearch';
+import { getUserDashboard } from '../api/dashboard';
+
+const MAX_THEORY_CREDITS = 20;
+const MAX_EXAM_CREDITS = 10;
 
 export default function ExamAnalysisPage() {
   const { analyze, result, isLoading, error } = useExamAnalysis();
   const { search, result: searchResult, isLoading: isSearchLoading, error: searchError } = useSearch();
   const [activeTab, setActiveTab] = useState<'analysis' | 'search'>('analysis');
   const [formResetSignal, setFormResetSignal] = useState(0);
+  const queryClient = useQueryClient();
+  const { data: dashboard } = useQuery({
+    queryKey: ['userDashboard'],
+    queryFn: getUserDashboard,
+  });
 
   useEffect(() => {
     if (result) {
       setFormResetSignal((value) => value + 1);
+      queryClient.invalidateQueries({ queryKey: ['userDashboard'] });
     }
-  }, [result]);
+  }, [queryClient, result]);
+
+  useEffect(() => {
+    if (searchResult) {
+      queryClient.invalidateQueries({ queryKey: ['userDashboard'] });
+    }
+  }, [queryClient, searchResult]);
 
   const handleAnalysisSubmit = (file: File | undefined, query: string) => {
     analyze({ file, query });
@@ -35,6 +52,14 @@ export default function ExamAnalysisPage() {
           </h2>
         </div>
       </div>
+
+      {dashboard?.credit && (
+        <CreditSummary
+          activeTab={activeTab}
+          theoryCredits={dashboard.credit.theoryCredits ?? MAX_THEORY_CREDITS}
+          examCredits={dashboard.credit.examCredits ?? dashboard.credit.dailyCredits}
+        />
+      )}
 
       {/* Tabs */}
       <div className="border-b border-gray-200 mb-6">
@@ -97,6 +122,41 @@ export default function ExamAnalysisPage() {
           <SearchResult result={searchResult} error={searchError} isLoading={isSearchLoading} />
         </div>
       )}
+    </div>
+  );
+}
+
+function CreditSummary({
+  activeTab,
+  theoryCredits,
+  examCredits,
+}: {
+  activeTab: 'analysis' | 'search';
+  theoryCredits: number;
+  examCredits: number;
+}) {
+  const currentLabel = activeTab === 'analysis' ? '함수 및 문제 풀이' : '컴활 이론 질문';
+  const currentCredits = activeTab === 'analysis' ? examCredits : theoryCredits;
+  const currentMaxCredits = activeTab === 'analysis' ? MAX_EXAM_CREDITS : MAX_THEORY_CREDITS;
+
+  return (
+    <div className="mb-6 rounded-lg border border-blue-100 bg-blue-50 px-4 py-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-sm font-medium text-blue-700">현재 메뉴 남은 질문 횟수</p>
+          <p className="mt-1 text-2xl font-bold text-blue-950">
+            {currentLabel}: {currentCredits} / {currentMaxCredits}
+          </p>
+        </div>
+        <div className="flex gap-2 text-sm">
+          <span className="rounded-md bg-white px-3 py-2 text-gray-700 shadow-sm">
+            이론 {theoryCredits}/{MAX_THEORY_CREDITS}
+          </span>
+          <span className="rounded-md bg-white px-3 py-2 text-gray-700 shadow-sm">
+            문제풀이 {examCredits}/{MAX_EXAM_CREDITS}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
