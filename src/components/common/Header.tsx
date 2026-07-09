@@ -13,7 +13,7 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex h-16 items-center justify-between">
           <Link to="/exam-analysis" className="text-xl font-bold text-gray-900">
             학습 도우미
           </Link>
@@ -21,15 +21,12 @@ export default function Header() {
           <nav className="flex items-center gap-2">
             {user?.grade && user.grade >= 1 && (
               <>
-                <Link
-                  to="/dashboard"
-                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md"
-                >
+                <Link to="/dashboard" className="rounded-md px-3 py-2 text-gray-600 hover:text-gray-900">
                   대시보드
                 </Link>
                 <Link
                   to="/exam-analysis"
-                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
+                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
                 >
                   질문 / 답변
                 </Link>
@@ -39,42 +36,38 @@ export default function Header() {
               <>
                 <Link
                   to="/upload"
-                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
+                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
                 >
                   업로드
                 </Link>
                 <Link
                   to="/admin"
-                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
+                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
                 >
-                  회원관리
+                  회원 관리
                 </Link>
                 <Link
                   to="/admin/dashboard"
-                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
+                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
                 >
-                  관리대시보드
+                  관리자 대시보드
                 </Link>
               </>
             )}
 
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <span className="text-gray-600">
-                  {user?.nickname || user?.email}
-                </span>
+                <span className="text-gray-600">{user?.nickname || user?.email}</span>
                 <button
+                  type="button"
                   onClick={handleLogout}
-                  className="text-gray-600 hover:text-gray-900 px-2 py-2 rounded-md whitespace-nowrap"
+                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
                 >
                   로그아웃
                 </button>
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-              >
+              <Link to="/login" className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
                 로그인
               </Link>
             )}

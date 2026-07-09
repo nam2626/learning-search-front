@@ -1,20 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import AnalysisForm from '../components/exam/AnalysisForm';
 import AnalysisResult from '../components/exam/AnalysisResult';
-import { useExamAnalysis } from '../hooks/useExamAnalysis';
+import FunctionDictionary from '../components/functionDictionary/FunctionDictionary';
 import SearchBar from '../components/search/SearchBar';
 import SearchResult from '../components/search/SearchResult';
+import { useExamAnalysis } from '../hooks/useExamAnalysis';
 import { useSearch } from '../hooks/useSearch';
 import { getUserDashboard } from '../api/dashboard';
 
 const MAX_THEORY_CREDITS = 20;
 const MAX_EXAM_CREDITS = 10;
 
+type ActiveTab = 'analysis' | 'search' | 'dictionary';
+
 export default function ExamAnalysisPage() {
   const { analyze, result, isLoading, error } = useExamAnalysis();
   const { search, result: searchResult, isLoading: isSearchLoading, error: searchError } = useSearch();
-  const [activeTab, setActiveTab] = useState<'analysis' | 'search'>('analysis');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('analysis');
   const [formResetSignal, setFormResetSignal] = useState(0);
   const queryClient = useQueryClient();
   const { data: dashboard } = useQuery({
@@ -43,13 +46,16 @@ export default function ExamAnalysisPage() {
     search(query);
   };
 
+  const handleDictionaryQuestion = (query: string) => {
+    setActiveTab('search');
+    search(query);
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="md:flex md:items-center md:justify-between mb-6">
-        <div className="flex-1 min-w-0">
-          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-            함수 및 문제 풀이
-          </h2>
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mb-6 md:flex md:items-center md:justify-between">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl">함수 및 문제 풀이</h2>
         </div>
       </div>
 
@@ -61,35 +67,22 @@ export default function ExamAnalysisPage() {
         />
       )}
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-          <button
-            onClick={() => setActiveTab('analysis')}
-            className={`${
-              activeTab === 'analysis'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-          >
-            함수 및 문제 풀이
-          </button>
-          <button
-            onClick={() => setActiveTab('search')}
-            className={`${
-              activeTab === 'search'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-          >
-            컴활 1급/2급 이론 질문
-          </button>
+      <div className="mb-6 border-b border-gray-200">
+        <nav className="-mb-px flex gap-8 overflow-x-auto" aria-label="Tabs">
+          <TabButton active={activeTab === 'analysis'} onClick={() => setActiveTab('analysis')}>
+            문제 분석
+          </TabButton>
+          <TabButton active={activeTab === 'search'} onClick={() => setActiveTab('search')}>
+            이론 질문
+          </TabButton>
+          <TabButton active={activeTab === 'dictionary'} onClick={() => setActiveTab('dictionary')}>
+            함수 사전
+          </TabButton>
         </nav>
       </div>
 
-      {/* Content */}
       {activeTab === 'analysis' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           <div>
             <AnalysisForm
               onSubmit={handleAnalysisSubmit}
@@ -97,7 +90,7 @@ export default function ExamAnalysisPage() {
               resetSignal={formResetSignal}
             />
             {error && (
-              <div className="mt-4 bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+              <div className="relative mt-4 rounded border border-red-400 bg-red-50 px-4 py-3 text-red-700">
                 <span className="block sm:inline">오류가 발생했습니다: {error.message}</span>
               </div>
             )}
@@ -106,7 +99,7 @@ export default function ExamAnalysisPage() {
             {result ? (
               <AnalysisResult result={result} />
             ) : (
-              <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center h-full flex flex-col justify-center">
+              <div className="flex h-full flex-col justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center">
                 <span className="text-gray-500">분석 결과가 여기에 표시됩니다.</span>
               </div>
             )}
@@ -122,7 +115,35 @@ export default function ExamAnalysisPage() {
           <SearchResult result={searchResult} error={searchError} isLoading={isSearchLoading} />
         </div>
       )}
+
+      {activeTab === 'dictionary' && (
+        <FunctionDictionary onAskQuestion={handleDictionaryQuestion} isAsking={isSearchLoading} />
+      )}
     </div>
+  );
+}
+
+function TabButton({
+  active,
+  children,
+  onClick,
+}: {
+  active: boolean;
+  children: ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium ${
+        active
+          ? 'border-blue-500 text-blue-600'
+          : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -131,11 +152,12 @@ function CreditSummary({
   theoryCredits,
   examCredits,
 }: {
-  activeTab: 'analysis' | 'search';
+  activeTab: ActiveTab;
   theoryCredits: number;
   examCredits: number;
 }) {
-  const currentLabel = activeTab === 'analysis' ? '함수 및 문제 풀이' : '컴활 이론 질문';
+  const currentLabel =
+    activeTab === 'analysis' ? '문제 분석' : activeTab === 'dictionary' ? '함수 사전' : '이론 질문';
   const currentCredits = activeTab === 'analysis' ? examCredits : theoryCredits;
   const currentMaxCredits = activeTab === 'analysis' ? MAX_EXAM_CREDITS : MAX_THEORY_CREDITS;
 
@@ -143,7 +165,7 @@ function CreditSummary({
     <div className="mb-6 rounded-lg border border-blue-100 bg-blue-50 px-4 py-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm font-medium text-blue-700">현재 메뉴 남은 질문 횟수</p>
+          <p className="text-sm font-medium text-blue-700">현재 메뉴 사용 가능 횟수</p>
           <p className="mt-1 text-2xl font-bold text-blue-950">
             {currentLabel}: {currentCredits} / {currentMaxCredits}
           </p>
@@ -153,7 +175,7 @@ function CreditSummary({
             이론 {theoryCredits}/{MAX_THEORY_CREDITS}
           </span>
           <span className="rounded-md bg-white px-3 py-2 text-gray-700 shadow-sm">
-            문제풀이 {examCredits}/{MAX_EXAM_CREDITS}
+            문제 분석 {examCredits}/{MAX_EXAM_CREDITS}
           </span>
         </div>
       </div>
