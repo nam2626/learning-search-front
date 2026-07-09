@@ -26,9 +26,15 @@ export default function Header() {
                 </Link>
                 <Link
                   to="/exam-analysis"
-                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
+                  className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:text-gray-900"
                 >
                   질문 / 답변
+                </Link>
+                <Link
+                  to="/function-dictionary"
+                  className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:text-gray-900"
+                >
+                  함수 사전
                 </Link>
               </>
             )}
@@ -36,19 +42,19 @@ export default function Header() {
               <>
                 <Link
                   to="/upload"
-                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
+                  className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:text-gray-900"
                 >
                   업로드
                 </Link>
                 <Link
                   to="/admin"
-                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
+                  className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:text-gray-900"
                 >
                   회원 관리
                 </Link>
                 <Link
                   to="/admin/dashboard"
-                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
+                  className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:text-gray-900"
                 >
                   관리자 대시보드
                 </Link>
@@ -61,7 +67,7 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="rounded-md px-2 py-2 text-gray-600 hover:text-gray-900 whitespace-nowrap"
+                  className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:text-gray-900"
                 >
                   로그아웃
                 </button>

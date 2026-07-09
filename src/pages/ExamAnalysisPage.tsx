@@ -1,8 +1,8 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import AnalysisForm from '../components/exam/AnalysisForm';
 import AnalysisResult from '../components/exam/AnalysisResult';
-import FunctionDictionary from '../components/functionDictionary/FunctionDictionary';
 import SearchBar from '../components/search/SearchBar';
 import SearchResult from '../components/search/SearchResult';
 import { useExamAnalysis } from '../hooks/useExamAnalysis';
@@ -12,12 +12,21 @@ import { getUserDashboard } from '../api/dashboard';
 const MAX_THEORY_CREDITS = 20;
 const MAX_EXAM_CREDITS = 10;
 
-type ActiveTab = 'analysis' | 'search' | 'dictionary';
+type ActiveTab = 'analysis' | 'search';
+
+interface LocationState {
+  initialTab?: ActiveTab;
+  initialQuery?: string;
+}
 
 export default function ExamAnalysisPage() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const locationState = location.state as LocationState | null;
+  const initialQueryHandledRef = useRef(false);
   const { analyze, result, isLoading, error } = useExamAnalysis();
   const { search, result: searchResult, isLoading: isSearchLoading, error: searchError } = useSearch();
-  const [activeTab, setActiveTab] = useState<ActiveTab>('analysis');
+  const [activeTab, setActiveTab] = useState<ActiveTab>(locationState?.initialTab ?? 'analysis');
   const [formResetSignal, setFormResetSignal] = useState(0);
   const queryClient = useQueryClient();
   const { data: dashboard } = useQuery({
@@ -38,16 +47,22 @@ export default function ExamAnalysisPage() {
     }
   }, [queryClient, searchResult]);
 
+  useEffect(() => {
+    if (initialQueryHandledRef.current || !locationState?.initialQuery) {
+      return;
+    }
+
+    initialQueryHandledRef.current = true;
+    setActiveTab('search');
+    search(locationState.initialQuery);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, locationState?.initialQuery, navigate, search]);
+
   const handleAnalysisSubmit = (file: File | undefined, query: string) => {
     analyze({ file, query });
   };
 
   const handleSearchSubmit = (query: string) => {
-    search(query);
-  };
-
-  const handleDictionaryQuestion = (query: string) => {
-    setActiveTab('search');
     search(query);
   };
 
@@ -74,9 +89,6 @@ export default function ExamAnalysisPage() {
           </TabButton>
           <TabButton active={activeTab === 'search'} onClick={() => setActiveTab('search')}>
             이론 질문
-          </TabButton>
-          <TabButton active={activeTab === 'dictionary'} onClick={() => setActiveTab('dictionary')}>
-            함수 사전
           </TabButton>
         </nav>
       </div>
@@ -115,10 +127,6 @@ export default function ExamAnalysisPage() {
           <SearchResult result={searchResult} error={searchError} isLoading={isSearchLoading} />
         </div>
       )}
-
-      {activeTab === 'dictionary' && (
-        <FunctionDictionary onAskQuestion={handleDictionaryQuestion} isAsking={isSearchLoading} />
-      )}
     </div>
   );
 }
@@ -156,8 +164,7 @@ function CreditSummary({
   theoryCredits: number;
   examCredits: number;
 }) {
-  const currentLabel =
-    activeTab === 'analysis' ? '문제 분석' : activeTab === 'dictionary' ? '함수 사전' : '이론 질문';
+  const currentLabel = activeTab === 'analysis' ? '문제 분석' : '이론 질문';
   const currentCredits = activeTab === 'analysis' ? examCredits : theoryCredits;
   const currentMaxCredits = activeTab === 'analysis' ? MAX_EXAM_CREDITS : MAX_THEORY_CREDITS;
 

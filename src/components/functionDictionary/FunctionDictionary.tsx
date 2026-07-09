@@ -68,7 +68,7 @@ export default function FunctionDictionary({ onAskQuestion, isAsking }: Function
                 value={levelFilter}
                 onChange={(event) => {
                   const value = event.target.value;
-                  setLevelFilter(value === 'all' ? 'all' : Number(value) as FunctionLevel);
+                  setLevelFilter(value === 'all' ? 'all' : (Number(value) as FunctionLevel));
                 }}
                 className="w-full rounded-md border border-gray-300 px-3 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               >
