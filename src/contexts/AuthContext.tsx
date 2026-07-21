@@ -73,14 +73,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const deleteAccount = async () => {
-    try {
-      await authApi.deleteAccount();
-    } finally {
-      setToken(null);
-      setUser(null);
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-    }
+    // 서버가 회원 및 연관 데이터 삭제를 모두 완료한 뒤에만
+    // 클라이언트의 인증 정보를 제거한다. 실패 시에는 로그인 상태를
+    // 유지해 사용자가 오류를 확인하고 다시 시도할 수 있어야 한다.
+    await authApi.deleteAccount();
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   };
 
   const logout = async () => {

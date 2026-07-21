@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 
 export default function ProfileSettings() {
   const { user, updateProfile, deleteAccount } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [nickname, setNickname] = useState(user?.nickname || '');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
@@ -52,7 +54,9 @@ export default function ProfileSettings() {
   };
 
   const handleDeleteAccount = async () => {
-    const confirmed = window.confirm('정말 회원 탈퇴하시겠습니까? 계정 정보가 삭제됩니다.');
+    const confirmed = window.confirm(
+      '정말 회원 탈퇴하시겠습니까? 계정 정보와 검색·질문·답변 기록 등 회원과 관련된 모든 정보가 영구 삭제되며 복구할 수 없습니다.'
+    );
     if (!confirmed) {
       return;
     }
@@ -63,7 +67,13 @@ export default function ProfileSettings() {
 
     try {
       await deleteAccount();
-      navigate('/login', { replace: true });
+      // 탈퇴한 회원의 대시보드, 검색 결과 등이 메모리 캐시에 남지 않도록
+      // 서버 삭제가 성공한 직후 모든 서버 상태 캐시를 폐기한다.
+      queryClient.clear();
+      navigate('/login', {
+        replace: true,
+        state: { message: '회원 및 관련 정보가 모두 삭제되었습니다.' },
+      });
     } catch (err) {
       setError(getErrorMessage(err, '회원 탈퇴에 실패했습니다.'));
       setIsDeleting(false);
@@ -149,6 +159,11 @@ export default function ProfileSettings() {
             {isDeleting ? '탈퇴 처리 중...' : '회원 탈퇴'}
           </button>
         </div>
+
+        <p className="text-xs leading-5 text-red-600">
+          탈퇴하면 계정 정보뿐 아니라 검색·질문·답변 기록 등 회원과 관련된 모든 정보가
+          영구 삭제되며 복구할 수 없습니다.
+        </p>
       </form>
     </div>
   );

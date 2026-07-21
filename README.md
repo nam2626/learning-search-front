@@ -83,7 +83,7 @@ npm run preview
 | 회원가입 | POST | `/api/auth/register` |
 | 로그인 | POST | `/api/auth/login` |
 | 로그아웃 | POST | `/api/auth/logout` |
-| 회원탈퇴 | DELETE | `/api/auth/delete` |
+| 회원탈퇴 및 회원 관련 정보 전체 삭제 | DELETE | `/api/auth/delete` |
 | 문서 업로드 | POST | `/api/documents/upload` |
 | 검색 | GET | `/api/search?query=` |
 
