@@ -63,7 +63,13 @@ export default function Header() {
 
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
-                <span className="text-gray-600">{user?.nickname || user?.email}</span>
+                <Link
+                  to="/settings"
+                  className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                >
+                  내 정보
+                </Link>
+                <span className="hidden text-gray-600 sm:inline">{user?.nickname || user?.email}</span>
                 <button
                   type="button"
                   onClick={handleLogout}

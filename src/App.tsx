@@ -13,6 +13,7 @@ import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import ExamAnalysisPage from './pages/ExamAnalysisPage';
 import FunctionDictionaryPage from './pages/FunctionDictionaryPage';
+import AccountSettingsPage from './pages/AccountSettingsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,6 +45,7 @@ function App() {
                   <DashboardPage />
                 </ApprovedRoute>
               } />
+              <Route path="settings" element={<AccountSettingsPage />} />
               <Route path="exam-analysis" element={
                 <ApprovedRoute>
                   <ExamAnalysisPage />
