@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { getMembers, updateMemberGrade } from '../api/admin';
+import { deleteMember, getMembers, updateMemberGrade } from '../api/admin';
 import type { Member } from '../types';
 import { MemberGrade } from '../types';
 
@@ -15,6 +15,7 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [deletingUid, setDeletingUid] = useState<string | null>(null);
 
   const loadMembers = async (token?: string) => {
     try {
@@ -80,6 +81,27 @@ export default function AdminPage() {
         return 'bg-blue-100 text-blue-800';
       default:
         return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const handleDeleteMember = async (member: Member) => {
+    const memberName = member.nickname || member.email || member.uid;
+    const confirmed = window.confirm(
+      `${memberName} 회원을 강제로 탈퇴시키시겠습니까?\n\n계정과 관련 데이터가 영구 삭제되며 복구할 수 없습니다.`
+    );
+
+    if (!confirmed) return;
+
+    setDeletingUid(member.uid);
+    try {
+      await deleteMember(member.uid);
+      setMembers((prev) => prev.filter((item) => item.uid !== member.uid));
+      alert('회원이 강제 탈퇴 처리되었습니다.');
+    } catch (err) {
+      alert('회원 강제 탈퇴에 실패했습니다.');
+      console.error(err);
+    } finally {
+      setDeletingUid(null);
     }
   };
 
@@ -193,7 +215,7 @@ export default function AdminPage() {
                   가입일
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  등급 변경
+                  관리 작업
                 </th>
               </tr>
             </thead>
@@ -220,15 +242,26 @@ export default function AdminPage() {
                       : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <div className="flex min-w-32 flex-col gap-2">
                     <select
                       value={member.grade}
                       onChange={(e) => handleGradeChange(member.uid, parseInt(e.target.value))}
+                      disabled={deletingUid === member.uid}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     >
                       <option value={MemberGrade.UNAPPROVED}>미승인</option>
                       <option value={MemberGrade.APPROVED}>승인됨</option>
                       <option value={MemberGrade.ADMIN}>관리자</option>
                     </select>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteMember(member)}
+                      disabled={deletingUid !== null}
+                      className="rounded-md border border-red-300 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {deletingUid === member.uid ? '탈퇴 처리 중...' : '강제 탈퇴'}
+                    </button>
+                    </div>
                   </td>
                 </tr>
               ))}

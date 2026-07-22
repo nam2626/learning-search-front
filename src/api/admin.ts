@@ -12,3 +12,7 @@ export const updateMemberGrade = async (uid: string, grade: number): Promise<voi
     params: { grade },
   });
 };
+
+export const deleteMember = async (uid: string): Promise<void> => {
+  await apiClient.delete(`/api/admin/members/${uid}`);
+};
