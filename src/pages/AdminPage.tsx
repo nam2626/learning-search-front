@@ -116,6 +116,9 @@ export default function AdminPage() {
                   등급
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  가입일
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   등급 변경
                 </th>
               </tr>
@@ -136,6 +139,11 @@ export default function AdminPage() {
                     <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getGradeColor(member.grade)}`}>
                       {getGradeLabel(member.grade)}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {member.createdAt
+                      ? new Date(member.createdAt).toLocaleString('ko-KR')
+                      : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <select

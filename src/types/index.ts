@@ -50,7 +50,7 @@ export interface Member {
   email: string;
   nickname: string;
   grade: number;
-  createdAt?: string;
+  createdAt: string | null;
 }
 
 export interface MemberListResponse {
