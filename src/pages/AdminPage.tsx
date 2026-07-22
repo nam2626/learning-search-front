@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getMembers, updateMemberGrade } from '../api/admin';
 import type { Member } from '../types';
 import { MemberGrade } from '../types';
+
+type SortField = 'createdAt' | 'nickname' | 'email' | 'grade';
+type SortDirection = 'asc' | 'desc';
 
 export default function AdminPage() {
   const [members, setMembers] = useState<Member[]>([]);
@@ -9,6 +12,9 @@ export default function AdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [pageToken, setPageToken] = useState<string | undefined>();
   const [hasMore, setHasMore] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortField, setSortField] = useState<SortField>('createdAt');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const loadMembers = async (token?: string) => {
     try {
@@ -77,6 +83,34 @@ export default function AdminPage() {
     }
   };
 
+  const displayedMembers = useMemo(() => {
+    const normalizedSearchTerm = searchTerm.trim().toLocaleLowerCase('ko-KR');
+    const filteredMembers = normalizedSearchTerm
+      ? members.filter((member) =>
+          [member.uid, member.email, member.nickname, getGradeLabel(member.grade)]
+            .some((value) => value.toLocaleLowerCase('ko-KR').includes(normalizedSearchTerm))
+        )
+      : members;
+
+    return [...filteredMembers].sort((a, b) => {
+      if (sortField === 'createdAt') {
+        if (!a.createdAt) return b.createdAt ? 1 : 0;
+        if (!b.createdAt) return -1;
+
+        const comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        return sortDirection === 'asc' ? comparison : -comparison;
+      }
+
+      if (sortField === 'grade') {
+        const comparison = a.grade - b.grade;
+        return sortDirection === 'asc' ? comparison : -comparison;
+      }
+
+      const comparison = a[sortField].localeCompare(b[sortField], 'ko-KR');
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }, [members, searchTerm, sortDirection, sortField]);
+
   if (loading && members.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -99,6 +133,46 @@ export default function AdminPage() {
       )}
 
       <div className="bg-white shadow-md rounded-lg overflow-hidden">
+        <div className="flex flex-col gap-3 border-b border-gray-200 p-4 sm:flex-row sm:items-center">
+          <div className="flex-1">
+            <label htmlFor="member-search" className="sr-only">회원 검색</label>
+            <input
+              id="member-search"
+              type="search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="UID, 이메일, 닉네임 또는 등급 검색"
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            />
+          </div>
+          <div className="flex gap-2">
+            <label htmlFor="member-sort-field" className="sr-only">정렬 기준</label>
+            <select
+              id="member-sort-field"
+              value={sortField}
+              onChange={(event) => setSortField(event.target.value as SortField)}
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            >
+              <option value="createdAt">가입일</option>
+              <option value="nickname">닉네임</option>
+              <option value="email">이메일</option>
+              <option value="grade">등급</option>
+            </select>
+            <label htmlFor="member-sort-direction" className="sr-only">정렬 방향</label>
+            <select
+              id="member-sort-direction"
+              value={sortDirection}
+              onChange={(event) => setSortDirection(event.target.value as SortDirection)}
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            >
+              <option value="desc">내림차순</option>
+              <option value="asc">오름차순</option>
+            </select>
+          </div>
+          <p className="text-sm text-gray-500 whitespace-nowrap">
+            {displayedMembers.length}명 / {members.length}명
+          </p>
+        </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -124,7 +198,7 @@ export default function AdminPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {members.map((member) => (
+              {displayedMembers.map((member) => (
                 <tr key={member.uid} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">
                     {member.uid}
@@ -158,6 +232,13 @@ export default function AdminPage() {
                   </td>
                 </tr>
               ))}
+              {displayedMembers.length === 0 && members.length > 0 && (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
+                    검색 조건에 맞는 회원이 없습니다.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
