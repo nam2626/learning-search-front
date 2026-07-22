@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import CreditCard from '../components/dashboard/CreditCard';
 import RecentQueries from '../components/dashboard/RecentQueries';
-import ProfileSettings from '../components/dashboard/ProfileSettings';
 import { getUserDashboard } from '../api/dashboard';
 import type { UserDashboard } from '../types';
 
@@ -15,7 +14,7 @@ export default function DashboardPage() {
       try {
         const data = await getUserDashboard();
         setDashboard(data);
-      } catch (err) {
+      } catch {
         setError('대시보드 정보를 불러오는데 실패했습니다.');
       } finally {
         setIsLoading(false);
@@ -52,10 +51,7 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-1">
-            <div className="space-y-6">
-              <ProfileSettings />
-              {dashboard?.credit && <CreditCard credit={dashboard.credit} />}
-            </div>
+            {dashboard?.credit && <CreditCard credit={dashboard.credit} />}
           </div>
 
           <div className="lg:col-span-2">
