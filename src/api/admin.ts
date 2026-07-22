@@ -14,5 +14,5 @@ export const updateMemberGrade = async (uid: string, grade: number): Promise<voi
 };
 
 export const deleteMember = async (uid: string): Promise<void> => {
-  await apiClient.delete(`/api/admin/members/${uid}`);
+  await apiClient.delete(`/api/admin/members/${encodeURIComponent(uid)}`);
 };

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
 import { deleteMember, getMembers, updateMemberGrade } from '../api/admin';
 import type { Member } from '../types';
 import { MemberGrade } from '../types';
@@ -98,7 +99,7 @@ export default function AdminPage() {
       setMembers((prev) => prev.filter((item) => item.uid !== member.uid));
       alert('회원이 강제 탈퇴 처리되었습니다.');
     } catch (err) {
-      alert('회원 강제 탈퇴에 실패했습니다.');
+      alert(getErrorMessage(err, '회원 강제 탈퇴에 실패했습니다.'));
       console.error(err);
     } finally {
       setDeletingUid(null);
@@ -253,14 +254,20 @@ export default function AdminPage() {
                       <option value={MemberGrade.APPROVED}>승인됨</option>
                       <option value={MemberGrade.ADMIN}>관리자</option>
                     </select>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteMember(member)}
-                      disabled={deletingUid !== null}
-                      className="rounded-md border border-red-300 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      {deletingUid === member.uid ? '탈퇴 처리 중...' : '강제 탈퇴'}
-                    </button>
+                    {member.grade === MemberGrade.ADMIN ? (
+                      <p className="py-1 text-center text-xs text-gray-500">
+                        관리자 계정은 삭제할 수 없습니다.
+                      </p>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteMember(member)}
+                        disabled={deletingUid !== null}
+                        className="rounded-md border border-red-300 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        {deletingUid === member.uid ? '탈퇴 처리 중...' : '강제 탈퇴'}
+                      </button>
+                    )}
                     </div>
                   </td>
                 </tr>
@@ -296,4 +303,15 @@ export default function AdminPage() {
       </div>
     </div>
   );
+}
+
+function getErrorMessage(error: unknown, fallback: string) {
+  if (axios.isAxiosError(error)) {
+    const message = error.response?.data?.message;
+    if (typeof message === 'string' && message.trim()) {
+      return message;
+    }
+  }
+
+  return fallback;
 }
