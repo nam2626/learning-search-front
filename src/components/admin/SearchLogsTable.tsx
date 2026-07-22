@@ -25,7 +25,7 @@ export default function SearchLogsTable({ logs }: SearchLogsTableProps) {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                시간
+                검색 시간
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 사용자
@@ -33,24 +33,29 @@ export default function SearchLogsTable({ logs }: SearchLogsTableProps) {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 질문
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                답변 요약
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {logs.map((log) => (
-              <tr key={log.id} className="hover:bg-gray-50">
+            {logs.map((log, index) => (
+              <tr key={`${log.uid ?? 'unknown'}-${log.timestamp ?? index}`} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(log.createdAt).toLocaleString('ko-KR')}
+                  {log.timestamp ? new Date(log.timestamp).toLocaleString('ko-KR') : '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
-                  <div>
-                    <p className="text-gray-900">{log.nickname}</p>
-                    <p className="text-gray-500 text-xs">{log.email}</p>
-                  </div>
+                  <p className="text-gray-900">
+                    {log.username ?? log.uid ?? '알 수 없는 사용자'}
+                  </p>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
-                  <p className="truncate max-w-md" title={log.query}>
-                    {log.query}
+                  <p className="truncate max-w-md" title={log.question ?? '-'}>
+                    {log.question ?? '-'}
                   </p>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-900">
+                  <p className="max-w-md">{log.answerSummary ?? '-'}</p>
                 </td>
               </tr>
             ))}

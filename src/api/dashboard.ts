@@ -13,7 +13,7 @@ export const getAdminUsersCredits = async (): Promise<UserCreditInfo[]> => {
 
 export const getAdminSearchLogs = async (): Promise<AdminSearchLog[]> => {
   const response = await apiClient.get('/api/admin/dashboard/logs');
-  return response.data;
+  return Array.isArray(response.data) ? response.data : [];
 };
 
 export const setUserCredits = async (uid: string, credits: number): Promise<void> => {

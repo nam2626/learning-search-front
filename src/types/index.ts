@@ -95,10 +95,9 @@ export interface UserCreditInfo {
 }
 
 export interface AdminSearchLog {
-  id: string;
-  uid: string;
-  email: string;
-  nickname: string;
-  query: string;
-  createdAt: string;
+  uid?: string;
+  username?: string;
+  question?: string;
+  timestamp?: string;
+  answerSummary?: string | null;
 }
