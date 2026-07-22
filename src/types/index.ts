@@ -87,6 +87,7 @@ export interface UserDashboard {
 
 export interface UserCreditInfo {
   uid: string;
+  username?: string | null;
   dailyCredits: number;
   theoryCredits: number;
   examCredits: number;

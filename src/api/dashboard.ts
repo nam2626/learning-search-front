@@ -16,8 +16,12 @@ export const getAdminSearchLogs = async (): Promise<AdminSearchLog[]> => {
   return Array.isArray(response.data) ? response.data : [];
 };
 
-export const setUserCredits = async (uid: string, credits: number): Promise<void> => {
+export const setUserCredits = async (
+  uid: string,
+  theoryCredits: number,
+  examCredits: number,
+): Promise<void> => {
   await apiClient.post(`/api/admin/users/${uid}/credits`, null, {
-    params: { credits },
+    params: { theoryCredits, examCredits },
   });
 };

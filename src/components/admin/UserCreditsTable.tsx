@@ -12,26 +12,29 @@ const MAX_THEORY_CREDITS = 20;
 
 export default function UserCreditsTable({ users, onUpdate }: UserCreditsTableProps) {
   const [editingUid, setEditingUid] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState<number>(0);
+  const [editTheoryCredits, setEditTheoryCredits] = useState(0);
+  const [editExamCredits, setEditExamCredits] = useState(0);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleEditStart = (user: UserCreditInfo) => {
     setEditingUid(user.uid);
-    setEditValue(user.dailyCredits);
+    setEditTheoryCredits(user.theoryCredits ?? 0);
+    setEditExamCredits(user.examCredits ?? user.dailyCredits ?? 0);
   };
 
   const handleEditCancel = () => {
     setEditingUid(null);
-    setEditValue(0);
+    setEditTheoryCredits(0);
+    setEditExamCredits(0);
   };
 
   const handleEditSave = async (uid: string) => {
     setIsUpdating(true);
     try {
-      await setUserCredits(uid, editValue);
+      await setUserCredits(uid, editTheoryCredits, editExamCredits);
       setEditingUid(null);
       onUpdate();
-    } catch (err) {
+    } catch {
       alert('크레딧 수정에 실패했습니다.');
     } finally {
       setIsUpdating(false);
@@ -58,7 +61,7 @@ export default function UserCreditsTable({ users, onUpdate }: UserCreditsTablePr
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                UID
+                사용자
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                 남은 횟수
@@ -78,18 +81,45 @@ export default function UserCreditsTable({ users, onUpdate }: UserCreditsTablePr
             {users.map((user) => (
               <tr key={user.uid} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                  {user.uid.substring(0, 8)}...
+                  <p className="font-sans text-gray-900">
+                    {user.username ?? user.uid ?? '알 수 없는 사용자'}
+                  </p>
+                  {user.username && (
+                    <p className="mt-1 text-xs text-gray-500" title={user.uid}>
+                      {user.uid.substring(0, 8)}...
+                    </p>
+                  )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {editingUid === user.uid ? (
-                    <input
-                      type="number"
-                      min="0"
-                      max={MAX_EXAM_CREDITS}
-                      value={editValue}
-                      onChange={(e) => setEditValue(parseInt(e.target.value) || 0)}
-                      className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-2">
+                        <span className="w-10 text-gray-700">이론</span>
+                        <input
+                          type="number"
+                          min="0"
+                          max={MAX_THEORY_CREDITS}
+                          value={editTheoryCredits}
+                          onChange={(e) => setEditTheoryCredits(
+                            Math.min(MAX_THEORY_CREDITS, Math.max(0, Number(e.target.value)))
+                          )}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <span className="w-10 text-gray-700">문제</span>
+                        <input
+                          type="number"
+                          min="0"
+                          max={MAX_EXAM_CREDITS}
+                          value={editExamCredits}
+                          onChange={(e) => setEditExamCredits(
+                            Math.min(MAX_EXAM_CREDITS, Math.max(0, Number(e.target.value)))
+                          )}
+                          className="w-20 px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </label>
+                    </div>
                   ) : (
                     <div className="space-y-1">
                       <p className={(user.theoryCredits ?? 0) === 0 ? 'text-red-600 font-medium' : 'text-gray-900'}>
