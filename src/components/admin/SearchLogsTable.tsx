@@ -4,6 +4,17 @@ interface SearchLogsTableProps {
   logs: AdminSearchLog[];
 }
 
+const formatKoreanTime = (timestamp?: string) => {
+  if (!timestamp) return '-';
+
+  const hasTimezone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(timestamp);
+  const date = new Date(hasTimezone ? timestamp : `${timestamp}Z`);
+
+  if (Number.isNaN(date.getTime())) return '-';
+
+  return date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' });
+};
+
 export default function SearchLogsTable({ logs }: SearchLogsTableProps) {
   if (logs.length === 0) {
     return (
@@ -42,7 +53,7 @@ export default function SearchLogsTable({ logs }: SearchLogsTableProps) {
             {logs.map((log, index) => (
               <tr key={`${log.uid ?? 'unknown'}-${log.timestamp ?? index}`} className="hover:bg-gray-50">
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {log.timestamp ? new Date(log.timestamp).toLocaleString('ko-KR') : '-'}
+                  {formatKoreanTime(log.timestamp)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <p className="text-gray-900">
