@@ -8,7 +8,7 @@ import {
 } from '../../data/functionDictionary';
 
 interface FunctionDictionaryProps {
-  onAskQuestion: (query: string) => void;
+  onAskQuestion: (query: string, reference: string) => void;
   isAsking: boolean;
 }
 
@@ -41,8 +41,20 @@ export default function FunctionDictionary({ onAskQuestion, isAsking }: Function
     spreadsheetFunctions.find((item) => item.name === selectedName) ?? filteredFunctions[0] ?? spreadsheetFunctions[0];
 
   const handleAsk = (item: SpreadsheetFunction) => {
+    const reference = [
+      `함수명: ${item.name}`,
+      `분류: ${item.category}`,
+      `출제 급수: ${item.levels.map((level) => `${level}급`).join(', ')}`,
+      `설명: ${item.summary}`,
+      `구문: ${item.syntax}`,
+      `예제: ${item.example}`,
+      `키워드: ${item.keywords.join(', ')}`,
+      `관련 함수: ${item.related.join(', ')}`,
+    ].join('\n');
+
     onAskQuestion(
       `컴퓨터활용능력 시험 기준으로 ${item.name} 함수의 사용법, 인수 의미, 자주 나오는 문제 유형, 예제를 설명해줘.`,
+      reference,
     );
   };
 

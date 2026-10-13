@@ -6,14 +6,14 @@ export function useSearch() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const search = async (query: string) => {
+  const search = async (query: string, reference?: string) => {
     if (!query.trim()) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await searchApi(query);
+      const response = await searchApi(query, reference);
       setResult(response);
     } catch {
       setError('검색 중 오류가 발생했습니다. 다시 시도해주세요.');

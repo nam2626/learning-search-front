@@ -17,6 +17,7 @@ type ActiveTab = 'analysis' | 'search';
 interface LocationState {
   initialTab?: ActiveTab;
   initialQuery?: string;
+  initialReference?: string;
 }
 
 export default function ExamAnalysisPage() {
@@ -54,9 +55,9 @@ export default function ExamAnalysisPage() {
 
     initialQueryHandledRef.current = true;
     setActiveTab('search');
-    search(locationState.initialQuery);
+    search(locationState.initialQuery, locationState.initialReference);
     navigate(location.pathname, { replace: true, state: null });
-  }, [location.pathname, locationState?.initialQuery, navigate, search]);
+  }, [location.pathname, locationState?.initialQuery, locationState?.initialReference, navigate, search]);
 
   const handleAnalysisSubmit = (file: File, query: string) => {
     analyze({ file, query });

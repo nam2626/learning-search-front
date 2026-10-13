@@ -1,18 +1,24 @@
 import apiClient from './client';
 
-export const search = async (query: string): Promise<string> => {
-  const response = await apiClient.get<any>('/api/search', { params: { query } });
-  
+export const search = async (query: string, reference?: string): Promise<string> => {
+  const response = await apiClient.get<unknown>('/api/search', {
+    params: reference ? { query, reference } : { query },
+  });
+  const data = response.data;
+
   // Handle { answer: "..." } object response
-  if (response.data && typeof response.data === 'object' && 'answer' in response.data) {
-    return response.data.answer;
+  if (data && typeof data === 'object' && 'answer' in data) {
+    const answer = (data as { answer?: unknown }).answer;
+    if (typeof answer === 'string') {
+      return answer;
+    }
   }
-  
+
   // Handle raw string response
-  if (typeof response.data === 'string') {
-    return response.data;
+  if (typeof data === 'string') {
+    return data;
   }
-  
+
   // Handle other object structures (fallback)
-  return typeof response.data === 'object' ? JSON.stringify(response.data, null, 2) : String(response.data);
+  return typeof data === 'object' ? JSON.stringify(data, null, 2) : String(data);
 };

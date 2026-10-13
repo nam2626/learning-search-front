@@ -4,11 +4,12 @@ import FunctionDictionary from '../components/functionDictionary/FunctionDiction
 export default function FunctionDictionaryPage() {
   const navigate = useNavigate();
 
-  const handleAskQuestion = (query: string) => {
+  const handleAskQuestion = (query: string, reference: string) => {
     navigate('/exam-analysis', {
       state: {
         initialTab: 'search',
         initialQuery: query,
+        initialReference: reference,
       },
     });
   };
