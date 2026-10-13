@@ -3,7 +3,7 @@ import SearchResult from '../components/search/SearchResult';
 import { useSearch } from '../hooks/useSearch';
 
 export default function HomePage() {
-  const { result, isLoading, error, search } = useSearch();
+  const { result, turns, isLoading, error, search, clearResult } = useSearch();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -17,8 +17,20 @@ export default function HomePage() {
           </p>
         </div>
 
-        <SearchBar onSearch={search} isLoading={isLoading} />
-        <SearchResult result={result} error={error} isLoading={isLoading} />
+        <SearchBar onSearch={search} isLoading={isLoading} hasConversation={turns.length > 0} />
+        <SearchResult result={result} turns={turns} error={error} isLoading={isLoading} />
+        {turns.length > 0 && (
+          <div className="mx-auto mt-4 flex w-full max-w-3xl justify-end">
+            <button
+              type="button"
+              onClick={clearResult}
+              disabled={isLoading}
+              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              새 이론 질문 시작
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

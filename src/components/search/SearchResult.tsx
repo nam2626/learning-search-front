@@ -1,12 +1,14 @@
-import MarkdownViewer from '../common/MarkdownViewer';
+import type { ConversationTurn } from '../../types';
+import ConversationThread from '../common/ConversationThread';
 
 interface SearchResultProps {
   result: string | null;
+  turns: ConversationTurn[];
   error: string | null;
   isLoading: boolean;
 }
 
-export default function SearchResult({ result, error, isLoading }: SearchResultProps) {
+export default function SearchResult({ result, turns, error, isLoading }: SearchResultProps) {
   if (isLoading) {
     return (
       <div className="mx-auto mt-8 w-full max-w-3xl">
@@ -31,16 +33,13 @@ export default function SearchResult({ result, error, isLoading }: SearchResultP
     );
   }
 
-  if (!result) {
+  if (!result || turns.length === 0) {
     return null;
   }
 
   return (
     <div className="mx-auto mt-8 w-full max-w-3xl">
-      <div className="rounded-lg bg-white p-6 shadow-md">
-        <h3 className="mb-4 text-lg font-semibold text-gray-900">답변</h3>
-        <MarkdownViewer content={result} />
-      </div>
+      <ConversationThread turns={turns} />
     </div>
   );
 }

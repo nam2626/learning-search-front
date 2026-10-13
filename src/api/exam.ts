@@ -1,5 +1,5 @@
 import apiClient from './client';
-import type { AnalysisResult } from '../types';
+import type { AnalysisResult, ConversationTurn } from '../types';
 
 export const analyzeExam = async (file: File, query: string): Promise<AnalysisResult> => {
   const formData = new FormData();
@@ -10,6 +10,17 @@ export const analyzeExam = async (file: File, query: string): Promise<AnalysisRe
     headers: {
       'Content-Type': 'multipart/form-data',
     },
+  });
+  return response.data;
+};
+
+export const followUpExam = async (
+  query: string,
+  history: ConversationTurn[],
+): Promise<AnalysisResult> => {
+  const response = await apiClient.post<AnalysisResult>('/api/exam/follow-up', {
+    query,
+    history: history.slice(-3),
   });
   return response.data;
 };

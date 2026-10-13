@@ -1,8 +1,15 @@
 import apiClient from './client';
+import type { ConversationTurn } from '../types';
 
-export const search = async (query: string, reference?: string): Promise<string> => {
-  const response = await apiClient.get<unknown>('/api/search', {
-    params: reference ? { query, reference } : { query },
+export const search = async (
+  query: string,
+  reference?: string,
+  history: ConversationTurn[] = [],
+): Promise<string> => {
+  const response = await apiClient.post<unknown>('/api/search/conversation', {
+    query,
+    reference,
+    history: history.slice(-3),
   });
   const data = response.data;
 

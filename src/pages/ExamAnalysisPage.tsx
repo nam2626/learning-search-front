@@ -2,9 +2,10 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import AnalysisForm from '../components/exam/AnalysisForm';
-import AnalysisResult from '../components/exam/AnalysisResult';
 import SearchBar from '../components/search/SearchBar';
 import SearchResult from '../components/search/SearchResult';
+import ConversationThread from '../components/common/ConversationThread';
+import FollowUpForm from '../components/common/FollowUpForm';
 import { useExamAnalysis } from '../hooks/useExamAnalysis';
 import { useSearch } from '../hooks/useSearch';
 import { getUserDashboard } from '../api/dashboard';
@@ -25,8 +26,23 @@ export default function ExamAnalysisPage() {
   const navigate = useNavigate();
   const locationState = location.state as LocationState | null;
   const initialQueryHandledRef = useRef(false);
-  const { analyze, result, isLoading, error } = useExamAnalysis();
-  const { search, result: searchResult, isLoading: isSearchLoading, error: searchError } = useSearch();
+  const {
+    analyze,
+    followUp,
+    result,
+    turns: analysisTurns,
+    isLoading,
+    error,
+    clearResult: clearAnalysis,
+  } = useExamAnalysis();
+  const {
+    search,
+    result: searchResult,
+    turns: searchTurns,
+    isLoading: isSearchLoading,
+    error: searchError,
+    clearResult: clearSearch,
+  } = useSearch();
   const [activeTab, setActiveTab] = useState<ActiveTab>(locationState?.initialTab ?? 'analysis');
   const [formResetSignal, setFormResetSignal] = useState(0);
   const queryClient = useQueryClient();
@@ -109,8 +125,16 @@ export default function ExamAnalysisPage() {
             )}
           </div>
           <div>
-            {result ? (
-              <AnalysisResult result={result} />
+            {result && analysisTurns.length > 0 ? (
+              <div>
+                <ConversationThread turns={analysisTurns} />
+                <FollowUpForm
+                  onSubmit={followUp}
+                  onReset={clearAnalysis}
+                  isLoading={isLoading}
+                  resetLabel="새 문제 시작"
+                />
+              </div>
             ) : (
               <div className="flex h-full flex-col justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-12 text-center">
                 <span className="text-gray-500">분석 결과가 여기에 표시됩니다.</span>
@@ -123,9 +147,30 @@ export default function ExamAnalysisPage() {
       {activeTab === 'search' && (
         <div>
           <div className="mb-8">
-            <SearchBar onSearch={handleSearchSubmit} isLoading={isSearchLoading} />
+            <SearchBar
+              onSearch={handleSearchSubmit}
+              isLoading={isSearchLoading}
+              hasConversation={searchTurns.length > 0}
+            />
           </div>
-          <SearchResult result={searchResult} error={searchError} isLoading={isSearchLoading} />
+          <SearchResult
+            result={searchResult}
+            turns={searchTurns}
+            error={searchError}
+            isLoading={isSearchLoading}
+          />
+          {searchTurns.length > 0 && (
+            <div className="mx-auto mt-4 flex w-full max-w-3xl justify-end">
+              <button
+                type="button"
+                onClick={clearSearch}
+                disabled={isSearchLoading}
+                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                새 이론 질문 시작
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

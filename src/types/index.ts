@@ -35,6 +35,11 @@ export interface SearchResponse {
   answer: string;
 }
 
+export interface ConversationTurn {
+  question: string;
+  answer: string;
+}
+
 export interface AnalysisResult {
   answer: string;
   confidence: number;
