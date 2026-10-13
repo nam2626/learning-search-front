@@ -58,7 +58,7 @@ export default function ExamAnalysisPage() {
     navigate(location.pathname, { replace: true, state: null });
   }, [location.pathname, locationState?.initialQuery, navigate, search]);
 
-  const handleAnalysisSubmit = (file: File | undefined, query: string) => {
+  const handleAnalysisSubmit = (file: File, query: string) => {
     analyze({ file, query });
   };
 

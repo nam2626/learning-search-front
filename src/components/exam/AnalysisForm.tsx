@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 
 interface Props {
-  onSubmit: (file: File | undefined, query: string) => void;
+  onSubmit: (file: File, query: string) => void;
   isLoading: boolean;
   resetSignal?: number;
 }
@@ -29,12 +29,12 @@ export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props
 
   const applySelectedFile = (selectedFile: File) => {
     if (selectedFile.size > 10 * 1024 * 1024) {
-      setError('파일 크기는 10MB를 초과할 수 없습니다.');
+      setError('이미지 크기는 10MB를 초과할 수 없습니다.');
       return;
     }
 
     if (!isSupportedFile(selectedFile)) {
-      setError('PNG, JPG, JPEG, XLS, XLSX, CSV 파일만 업로드할 수 있습니다.');
+      setError('PNG, JPG, JPEG 이미지만 업로드할 수 있습니다.');
       return;
     }
 
@@ -88,6 +88,10 @@ export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props
       setError('질문을 입력해주세요.');
       return;
     }
+    if (!file) {
+      setError('분석할 문제 이미지를 업로드해주세요.');
+      return;
+    }
     onSubmit(file, query);
   };
 
@@ -131,12 +135,12 @@ export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">이미지 또는 엑셀 파일 업로드 (선택)</label>
+        <label className="block text-sm font-medium text-gray-700">문제 이미지 업로드</label>
         <div className="mt-1 flex items-center space-x-4">
           <input
             type="file"
             ref={fileInputRef}
-            accept="image/png, image/jpeg, image/jpg, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv, .xls, .xlsx, .csv"
+            accept="image/png, image/jpeg, image/jpg"
             onChange={handleFileChange}
             className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
           />
@@ -157,7 +161,7 @@ export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props
           )}
         </div>
         <p className="mt-2 text-sm text-gray-500">
-          PNG, JPG, XLS, XLSX, CSV up to 10MB. 이미지 캡처는 Ctrl+V로 붙여넣을 수 있습니다.
+          PNG, JPG, JPEG, 최대 10MB. 이미지 캡처는 Ctrl+V로 붙여넣을 수 있습니다.
         </p>
       </div>
 
@@ -185,11 +189,5 @@ export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props
 }
 
 function isSupportedFile(file: File) {
-  const filename = file.name.toLowerCase();
-  return (
-    file.type.startsWith('image/') ||
-    filename.endsWith('.xls') ||
-    filename.endsWith('.xlsx') ||
-    filename.endsWith('.csv')
-  );
+  return ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type);
 }
