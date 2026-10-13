@@ -6,8 +6,12 @@ interface Props {
   resetSignal?: number;
 }
 
+const DEFAULT_ANALYSIS_QUERY = `문제내용 : 이부분에 문제 내용을 입력하세요
+사용할 함수 및 연산자 : AVERAGE, IF, &
+출력 형식 : 영어-86.2`;
+
 export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props) {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(DEFAULT_ANALYSIS_QUERY);
   const [file, setFile] = useState<File | undefined>(undefined);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -18,7 +22,7 @@ export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props
       return;
     }
 
-    setQuery('');
+    setQuery(DEFAULT_ANALYSIS_QUERY);
     setFile(undefined);
     setPreview(null);
     setError(null);
@@ -125,12 +129,15 @@ export default function AnalysisForm({ onSubmit, isLoading, resetSignal }: Props
             name="query"
             rows={3}
             className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full resize-none sm:text-sm border-gray-300 rounded-md p-2 border"
-            placeholder="질문을 입력하세요..."
+            placeholder="문제내용, 사용할 함수 및 연산자, 출력 형식에 맞춰 입력하세요."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             maxLength={2000}
             required
           />
+          <p className="mt-2 text-xs text-gray-500">
+            이미지의 문제에 맞게 각 항목의 내용을 수정한 후 분석하세요.
+          </p>
         </div>
       </div>
 
