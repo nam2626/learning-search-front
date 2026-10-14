@@ -13,12 +13,12 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex min-h-16 flex-col gap-2 py-3 lg:flex-row lg:items-center lg:justify-between lg:py-0">
           <Link to="/exam-analysis" className="text-xl font-bold text-gray-900">
             학습 도우미
           </Link>
 
-          <nav className="flex items-center gap-2">
+          <nav className="flex max-w-full flex-wrap items-center gap-1 text-sm">
             {user?.grade && user.grade >= 1 && (
               <>
                 <Link to="/dashboard" className="rounded-md px-3 py-2 text-gray-600 hover:text-gray-900">
@@ -28,7 +28,13 @@ export default function Header() {
                   to="/exam-analysis"
                   className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:text-gray-900"
                 >
-                  질문 / 답변
+                  AI 문제 풀이
+                </Link>
+                <Link
+                  to="/board"
+                  className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-700"
+                >
+                  Q&amp;A 게시판
                 </Link>
                 <Link
                   to="/function-dictionary"
@@ -62,7 +68,7 @@ export default function Header() {
             )}
 
             {isAuthenticated ? (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-1 sm:gap-3">
                 <Link
                   to="/settings"
                   className="whitespace-nowrap rounded-md px-2 py-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900"

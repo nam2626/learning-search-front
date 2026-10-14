@@ -14,6 +14,10 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import ExamAnalysisPage from './pages/ExamAnalysisPage';
 import FunctionDictionaryPage from './pages/FunctionDictionaryPage';
 import AccountSettingsPage from './pages/AccountSettingsPage';
+import BoardPage from './pages/BoardPage';
+import QuestionCreatePage from './pages/QuestionCreatePage';
+import QuestionDetailPage from './pages/QuestionDetailPage';
+import QuestionEditPage from './pages/QuestionEditPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,6 +58,26 @@ function App() {
               <Route path="function-dictionary" element={
                 <ApprovedRoute>
                   <FunctionDictionaryPage />
+                </ApprovedRoute>
+              } />
+              <Route path="board" element={
+                <ApprovedRoute>
+                  <BoardPage />
+                </ApprovedRoute>
+              } />
+              <Route path="board/new" element={
+                <ApprovedRoute>
+                  <QuestionCreatePage />
+                </ApprovedRoute>
+              } />
+              <Route path="board/:questionId" element={
+                <ApprovedRoute>
+                  <QuestionDetailPage />
+                </ApprovedRoute>
+              } />
+              <Route path="board/:questionId/edit" element={
+                <ApprovedRoute>
+                  <QuestionEditPage />
                 </ApprovedRoute>
               } />
               <Route path="upload" element={
