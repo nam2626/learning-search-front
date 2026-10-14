@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import MarkdownEditor from './MarkdownEditor';
 
 interface AnswerFormProps {
   initialValue?: string;
@@ -20,6 +21,10 @@ export default function AnswerForm({ initialValue = '', submitLabel = '답변 �
       setValidationError('답변은 2자 이상 입력해 주세요.');
       return;
     }
+    if (normalized.length > 5000) {
+      setValidationError('답변은 5,000자 이하로 입력해 주세요.');
+      return;
+    }
     setValidationError(null);
     try {
       await onSubmit(normalized);
@@ -32,10 +37,17 @@ export default function AnswerForm({ initialValue = '', submitLabel = '답변 �
   return (
     <form onSubmit={submit} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div className="flex items-center justify-between gap-3">
-        <label htmlFor={initialValue ? 'answer-edit' : 'answer-new'} className="text-sm font-bold text-slate-900">{initialValue ? '답변 수정' : '답변 남기기'}</label>
+        <span className="text-sm font-bold text-slate-900">{initialValue ? '답변 수정' : '답변 남기기'}</span>
         <span className="text-xs text-slate-400">{content.length}/5,000</span>
       </div>
-      <textarea id={initialValue ? 'answer-edit' : 'answer-new'} value={content} onChange={(event) => setContent(event.target.value)} maxLength={5000} rows={initialValue ? 5 : 7} disabled={isSubmitting} placeholder="알고 있는 해결 방법을 구체적으로 공유해 주세요." className="mt-3 w-full resize-y rounded-xl border border-slate-300 px-4 py-3 leading-7 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 disabled:bg-slate-50" />
+      <MarkdownEditor
+        value={content}
+        onChange={setContent}
+        label={initialValue ? '답변 수정' : '답변 남기기'}
+        placeholder="알고 있는 해결 방법을 구체적으로 공유해 주세요."
+        minHeight={initialValue ? '220px' : '260px'}
+        disabled={isSubmitting}
+      />
       {(validationError || error) && <p role="alert" className="mt-3 text-sm text-red-600">{validationError || error}</p>}
       <div className="mt-4 flex justify-end gap-3">
         {onCancel && <button type="button" onClick={onCancel} disabled={isSubmitting} className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">취소</button>}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Answer } from '../../types/board';
 import AnswerForm from './AnswerForm';
+import MarkdownContent from './MarkdownContent';
 
 interface AnswerItemProps {
   answer: Answer;
@@ -53,7 +54,7 @@ export default function AnswerItem({ answer, isPending, error, onUpdate, onDelet
           {answer.canDelete && <button type="button" onClick={() => onDelete(answer)} className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50">삭제</button>}
         </div>
       </div>
-      <p className="mt-5 whitespace-pre-wrap break-words text-[15px] leading-7 text-slate-700">{answer.content}</p>
+      <MarkdownContent content={answer.content} className="mt-5" />
     </article>
   );
 }

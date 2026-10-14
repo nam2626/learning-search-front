@@ -12,6 +12,7 @@ import {
 import AnswerForm from '../components/board/AnswerForm';
 import AnswerItem from '../components/board/AnswerItem';
 import ConfirmDialog from '../components/board/ConfirmDialog';
+import MarkdownContent from '../components/board/MarkdownContent';
 import StatusBadge from '../components/board/StatusBadge';
 import { useQuestion } from '../hooks/useQuestion';
 import { boardKeys } from '../hooks/useQuestions';
@@ -115,7 +116,7 @@ export default function QuestionDetailPage() {
             )}
           </div>
           <div className="mt-7 border-t border-slate-100 pt-7">
-            <p className="whitespace-pre-wrap break-words text-[15px] leading-8 text-slate-700">{data.content}</p>
+            <MarkdownContent content={data.content} />
           </div>
         </article>
 
